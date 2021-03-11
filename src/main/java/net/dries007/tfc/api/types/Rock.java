@@ -24,7 +24,7 @@ import net.dries007.tfc.util.Helpers;
 import static net.dries007.tfc.TerraFirmaCraft.MOD_ID;
 
 
-public class Rock extends IForgeRegistryEntry.Impl<Rock>
+public class Rock extends IForgeRegistryEntry.Impl<Rock> implements Comparable<Rock>
 {
     @GameRegistry.ObjectHolder("tfc:granite")
     public static final Rock GRANITE = Helpers.getNull();
@@ -94,6 +94,12 @@ public class Rock extends IForgeRegistryEntry.Impl<Rock>
     public String toString()
     {
         return getRegistryName().getPath();
+    }
+
+    @Override
+    public int compareTo(Rock other)
+    {
+        return other.getRegistryName().compareTo(this.getRegistryName());
     }
 
     public enum ToolType

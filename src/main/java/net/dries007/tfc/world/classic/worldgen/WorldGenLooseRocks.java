@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 import net.dries007.tfc.ConfigTFC;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.objects.blocks.BlocksTFC;
+import net.dries007.tfc.objects.blocks.stone.BlockSurfaceRock;
 import net.dries007.tfc.objects.items.rock.ItemRock;
 import net.dries007.tfc.objects.te.TEPlacedItemFlat;
 import net.dries007.tfc.util.Helpers;
@@ -111,6 +113,24 @@ public class WorldGenLooseRocks implements IWorldGenerator
         }
     }
 
+    private void generateRock(World world, BlockPos pos, @Nullable Vein vein, Rock rock) {
+        if (world.isAirBlock(pos)) {
+            BlockPos downPos = pos.down();
+            IBlockState downState = world.getBlockState(downPos);
+            if (BlocksTFC.isSoil(downState) && downState.isSideSolid(world, downPos, EnumFacing.UP)) {
+                if (vein != null && vein.getType() != null) {
+                    // TODO: ORE SURFACE ROCKS!
+                    // world.setBlockState(pos, BlocksTFC.PLACED_ITEM_FLAT.getDefaultState(), 2);
+                    // TEPlacedItemFlat tile = Helpers.getTE(world, pos, TEPlacedItemFlat.class);
+                    // tile.setStack(vein.getType().getLooseRockItem());
+                } else {
+                    world.setBlockState(pos, BlockSurfaceRock.get(rock), 2);
+                }
+            }
+        }
+    }
+
+    /*
     private void generateRock(World world, BlockPos pos, @Nullable Vein vein, Rock rock)
     {
         // Use air, so it doesn't replace other replaceable world gen
@@ -144,6 +164,7 @@ public class WorldGenLooseRocks implements IWorldGenerator
             }
         }
     }
+     */
 
     @Nullable
     private Vein getRandomVein(List<Vein> veins, BlockPos pos, Random rand)

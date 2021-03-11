@@ -249,6 +249,9 @@ public final class ClientRegisterEvents
         ClientRegistry.bindTileEntitySpecialRenderer(TECrucible.class, new TESRCrucible());
         ClientRegistry.bindTileEntitySpecialRenderer(TEFirePit.class, new TESRFirePit());
         ClientRegistry.bindTileEntitySpecialRenderer(TESluice.class, new TESRSluice());
+
+        BlockSurfaceRock.getInstances().forEach(BlockSurfaceRock::onModelRegister);
+
     }
 
     @SubscribeEvent
@@ -318,6 +321,13 @@ public final class ClientRegisterEvents
             }
             return 0xFFFFFF;
         }, ForgeRegistries.ITEMS.getValuesCollection().stream().filter(x -> x instanceof ItemFood).toArray(Item[]::new));
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void onModelBake(ModelBakeEvent event)
+    {
+        BlockSurfaceRock.getInstances().forEach(b -> b.onModelBake(event));
     }
 
     /**

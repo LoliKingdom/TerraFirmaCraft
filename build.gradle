@@ -60,11 +60,7 @@ file "build.properties" withReader {
  *  - Revision resets on any bugfixes or small changes
  *  - Build increments, only resets on a new major version.
  */
-if (System.getenv('VERSION') != null) {
-    version = System.getenv('VERSION')
-} else {
-    version = 'dev'
-}
+version = "2.0.0.1"
 
 group = "net.dries007.tfc" // According to java standards, as I have control over this domain. If you fork this and release your own version, change this.
 archivesBaseName = "TerraFirmaCraft" // Jar filename. The final result must match ^[\w-\.]+$. (Alphanumerical + `_-.`)
@@ -131,6 +127,9 @@ String shortVersion = mcVersion.substring(0, mcVersion.lastIndexOf('.'))
 String strippedVersion = shortVersion.replace(".", "") + "0"
 
 dependencies {
+
+    compile fileTree(include: ["*.jar"], dir: "libs")
+
     // Mod dependencies go here.
     // Do not add dependencies without prior approval from the dev team. You can update existing ones.
     deobfProvided "CraftTweaker2:CraftTweaker2-MC${strippedVersion}-Main:${config.crafttweaker.version}"
