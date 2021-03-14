@@ -180,20 +180,6 @@ public class ItemWoodenBucket extends ItemTFC
         if (isInCreativeTab(tab))
         {
             items.add(new ItemStack(this));
-            for (String fluidName : ConfigTFC.General.MISC.woodenBucketWhitelist)
-            {
-                Fluid fluid = FluidRegistry.getFluid(fluidName);
-                if (fluid != null)
-                {
-                    ItemStack stack = new ItemStack(this);
-                    IFluidHandlerItem cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-                    if (cap != null)
-                    {
-                        cap.fill(new FluidStack(fluid, CAPACITY), true);
-                    }
-                    items.add(stack);
-                }
-            }
         }
     }
 

@@ -36,26 +36,21 @@ public class WorldGenTrees implements IWorldGenerator
     {
         if (ConfigTFC.General.WORLD.enableLooseSticks)
         {
-            for (int i = 0; i < amount; i++)
+            for (int i = 0; i < amount; ++i)
             {
-                final int x = chunkX * 16 + rand.nextInt(16) + 8;
-                final int z = chunkZ * 16 + rand.nextInt(16) + 8;
-                final BlockPos pos = world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z));
-
-                // Use air, so it doesn't replace other replaceable world gen
-                // This matches the check in BlockPlacedItemFlat for if the block can stay
-                // Also, only add on soil, since this is called by the world regen handler later
-                IBlockState stateDown = world.getBlockState(pos.down());
-                if (world.isAirBlock(pos) && stateDown.isSideSolid(world, pos.down(), EnumFacing.UP) && BlocksTFC.isGround(stateDown))
+                int x = chunkX * 16 + rand.nextInt(16) + 8;
+                int z = chunkZ * 16 + rand.nextInt(16) + 8;
+                BlockPos pos = world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z));
+                BlockPos downPos = pos.down();
+                if (world.isAirBlock(pos))
                 {
-                    world.setBlockState(pos, BlocksTFC.PLACED_ITEM_FLAT.getDefaultState());
-                    TEPlacedItemFlat tile = (TEPlacedItemFlat) world.getTileEntity(pos);
-                    if (tile != null)
+                    IBlockState downState = world.getBlockState(downPos);
+                    if (BlocksTFC.isGround(downState) && downState.isSideSolid(world, downPos, EnumFacing.UP))
                     {
-                        tile.setStack(new ItemStack(Items.STICK));
+                        world.setBlockState(pos, BlocksTFC.STICK_BLOCK.getDefaultState());
                     }
-                }
             }
+        }
         }
     }
 

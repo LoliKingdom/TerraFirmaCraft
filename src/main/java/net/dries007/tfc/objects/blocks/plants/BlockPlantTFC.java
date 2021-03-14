@@ -8,6 +8,7 @@ package net.dries007.tfc.objects.blocks.plants;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -184,9 +185,23 @@ public class BlockPlantTFC extends BlockBush implements IItemSize
     @Override
     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack)
     {
-        if (!plant.getOreDictName().isPresent() && !worldIn.isRemote && (stack.getItem().getHarvestLevel(stack, "knife", player, state) != -1 || stack.getItem().getHarvestLevel(stack, "scythe", player, state) != -1) && plant.getPlantType() != Plant.PlantType.SHORT_GRASS && plant.getPlantType() != Plant.PlantType.TALL_GRASS)
+        if (!worldIn.isRemote && !this.plant.getOreDictName().isPresent())
         {
-            spawnAsEntity(worldIn, pos, new ItemStack(this, 1));
+            Set<String> tools = stack.getItem().getToolClasses(stack);
+            if (tools.contains("knife") || tools.contains("scythe"))
+            {
+                if (this.plant.getPlantType() != Plant.PlantType.SHORT_GRASS && this.plant.getPlantType() != Plant.PlantType.TALL_GRASS)
+                {
+                    spawnAsEntity(worldIn, pos, new ItemStack(this, 1));
+                }
+            }
+            else
+            {
+                if (this.plant.getPlantType() == Plant.PlantType.STANDARD)
+                {
+                    spawnAsEntity(worldIn, pos, new ItemStack(Items.STICK, 1));
+                }
+            }
         }
         super.harvestBlock(worldIn, player, pos, state, te, stack);
     }

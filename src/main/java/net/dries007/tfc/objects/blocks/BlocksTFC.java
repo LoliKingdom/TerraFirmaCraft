@@ -91,6 +91,7 @@ public final class BlocksTFC
     public static final BlockPowderKeg POWDERKEG = getNull();
     public static final BlockGravel AGGREGATE = getNull();
     public static final Block FIRE_BRICKS = getNull();
+    public static final BlockStick STICK_BLOCK = getNull();
 
     // All these are for use in model registration. Do not use for block lookups.
     // Use the static get methods in the classes instead.
@@ -307,6 +308,8 @@ public final class BlocksTFC
 
         Builder<ItemBlock> normalItemBlocks = ImmutableList.builder();
         Builder<ItemBlock> inventoryItemBlocks = ImmutableList.builder();
+
+        register(r, "stick_block", new BlockStick());
 
         normalItemBlocks.add(new ItemBlockTFC(register(r, "debug", new BlockDebug(), CT_MISC)));
 
