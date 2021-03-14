@@ -33,14 +33,8 @@ import net.dries007.tfc.util.climate.IceMeltHandler;
 @ParametersAreNonnullByDefault
 public class BlockIceTFC extends BlockIce implements ITemperatureBlock
 {
-    private final Fluid waterFluid;
-    private final float meltThreshold;
-
-    public BlockIceTFC(Fluid waterFluid)
+    public BlockIceTFC()
     {
-        this.waterFluid = waterFluid;
-        this.meltThreshold = waterFluid == FluidsTFC.SALT_WATER.get() ? IceMeltHandler.SALT_WATER_MELT_THRESHOLD : IceMeltHandler.ICE_MELT_THRESHOLD;
-
         setHardness(0.5F);
         setLightOpacity(3);
         setSoundType(SoundType.GLASS);
@@ -84,7 +78,7 @@ public class BlockIceTFC extends BlockIce implements ITemperatureBlock
 
             if (material.blocksMovement() || material.isLiquid())
             {
-                worldIn.setBlockState(pos, waterFluid.getBlock().getDefaultState());
+                worldIn.setBlockState(pos, FluidsTFC.SALT_WATER.get().getBlock().getDefaultState());
             }
         }
     }
@@ -99,8 +93,8 @@ public class BlockIceTFC extends BlockIce implements ITemperatureBlock
         else
         {
             this.dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
-            worldIn.setBlockState(pos, waterFluid.getBlock().getDefaultState());
-            worldIn.neighborChanged(pos, waterFluid.getBlock(), pos);
+            worldIn.setBlockState(pos, FluidsTFC.SALT_WATER.get().getBlock().getDefaultState());
+            worldIn.neighborChanged(pos, FluidsTFC.SALT_WATER.get().getBlock(), pos);
         }
     }
 
@@ -108,7 +102,7 @@ public class BlockIceTFC extends BlockIce implements ITemperatureBlock
     public void onTemperatureUpdateTick(World world, BlockPos pos, IBlockState state)
     {
         // Either block light (i.e. from torches) or high enough temperature
-        if (world.getLightFor(EnumSkyBlock.BLOCK, pos) > 11 - getLightOpacity(state, world, pos) || ClimateTFC.getActualTemp(world, pos) > meltThreshold)
+        if (world.getLightFor(EnumSkyBlock.BLOCK, pos) > 8 || ClimateTFC.getActualTemp(world, pos) > IceMeltHandler.SALT_WATER_MELT_THRESHOLD)
         {
             turnIntoWater(world, pos);
         }

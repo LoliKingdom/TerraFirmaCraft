@@ -4,9 +4,7 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.6",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "BlockStaticLiquidMixin"
-  ],
+  "mixins": ["BlockIceMixin", "BlockSnowMixin", "BlockStaticLiquidMixin"],
   "injectors": {
     "defaultRequire": 1
   }

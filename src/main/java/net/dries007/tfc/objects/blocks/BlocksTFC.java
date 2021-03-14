@@ -330,7 +330,7 @@ public final class BlocksTFC
         inventoryItemBlocks.add(new ItemBlockTFC(register(r, "nest_box", new BlockNestBox(), CT_MISC)));
         inventoryItemBlocks.add(new ItemBlockSluice(register(r, "sluice", new BlockSluice(), CT_MISC)));
 
-        normalItemBlocks.add(new ItemBlockTFC(register(r, "sea_ice", new BlockIceTFC(FluidsTFC.SALT_WATER.get()), CT_MISC)));
+        normalItemBlocks.add(new ItemBlockTFC(register(r, "sea_ice", new BlockIceTFC(), CT_MISC)));
 
         normalItemBlocks.add(new ItemBlockLargeVessel(register(r, "ceramics/fired/large_vessel", new BlockLargeVessel(), CT_POTTERY)));
         normalItemBlocks.add(new ItemBlockPowderKeg(register(r, "powderkeg", new BlockPowderKeg(), CT_WOOD)));
@@ -774,14 +774,7 @@ public final class BlocksTFC
     public static void registerVanillaOverrides(RegistryEvent.Register<Block> event)
     {
         // Vanilla Overrides. Used for small tweaks on vanilla items, rather than replacing them outright
-        if (ConfigTFC.General.OVERRIDES.enableFrozenOverrides)
-        {
-            TerraFirmaCraft.getLog().info("The below warnings about unintended overrides are normal. The override is intended. ;)");
-            event.getRegistry().registerAll(
-                new BlockIceTFC(FluidsTFC.FRESH_WATER.get()).setRegistryName("minecraft", "ice").setTranslationKey("ice"),
-                new BlockSnowTFC().setRegistryName("minecraft", "snow_layer").setTranslationKey("snow")
-            );
-        }
+        TerraFirmaCraft.getLog().info("The below warnings about unintended overrides are normal. The override is intended. ;)");
 
         if (ConfigTFC.General.OVERRIDES.enableTorchOverride)
         {
