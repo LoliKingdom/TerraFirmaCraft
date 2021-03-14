@@ -15,7 +15,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.WeightedBakedModel;
@@ -50,11 +49,10 @@ import zone.rong.zairyou.api.block.metablock.AbstractMetaBlock;
 import zone.rong.zairyou.api.block.metablock.MutableMetaBlockBuilder;
 import zone.rong.zairyou.api.client.Bakery;
 import zone.rong.zairyou.api.client.IModelOverride;
+import zone.rong.zairyou.api.ore.SurfaceOreRockBlock;
 
 public class BlockSurfaceRock extends AbstractMetaBlock<RockProperty, Rock, MetaItemBlock> implements IModelOverride
 {
-    public static final AxisAlignedBB GROUNDCOVER_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D);
-
     public static final Map<Rock, BlockSurfaceRock> MAP;
 
     static
@@ -145,7 +143,7 @@ public class BlockSurfaceRock extends AbstractMetaBlock<RockProperty, Rock, Meta
     @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return GROUNDCOVER_AABB;
+        return SurfaceOreRockBlock.GROUNDCOVER_AABB;
     }
 
     @Nullable
@@ -208,12 +206,6 @@ public class BlockSurfaceRock extends AbstractMetaBlock<RockProperty, Rock, Meta
                 return new ModelResourceLocation(state.getBlock().getRegistryName().toString() + "_" + state.getValue(freezableProperty).getRegistryName().toString());
             }
         });
-        this.blockState.getValidStates().forEach(s ->
-        {
-            Rock rock = s.getValue(freezableProperty);
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), freezableProperty.getAllowedValues().indexOf(rock), new ModelResourceLocation(this.getRegistryName().toString() + "_" + rock.getRegistryName().toString()));
-        });
-
     }
 
     @Override
