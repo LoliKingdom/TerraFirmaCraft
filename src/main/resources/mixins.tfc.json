@@ -1,0 +1,13 @@
+{
+  "package": "net.dries007.tfc.core.mixins",
+  "refmap": "mixins.tfc.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.6",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "BlockStaticLiquidMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

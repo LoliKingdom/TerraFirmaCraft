@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -281,6 +282,11 @@ public final class ClientRegisterEvents
 
         blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> BlockFarmlandTFC.TINT[state.getValue(BlockFarmlandTFC.MOISTURE)],
             BlocksTFC.getAllBlockRockVariants().stream().filter(x -> x.getType() == Rock.Type.FARMLAND).toArray(BlockRockVariant[]::new));
+
+        if (ConfigTFC.Client.RENDER.tintVanillaWater)
+        {
+            blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> 0x296ACD, Blocks.WATER, Blocks.FLOWING_WATER);
+        }
     }
 
     @SubscribeEvent

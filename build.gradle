@@ -25,6 +25,10 @@ buildscript {
             url = "https://files.minecraftforge.net/maven"
         }
         maven {
+            name = "sponge"
+            url = 'https://repo.spongepowered.org/maven'
+        }
+        maven {
             name = "curseforge"
             url "https://plugins.gradle.org/m2/"
         }
@@ -33,6 +37,7 @@ buildscript {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
         classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.4.0"
         classpath "com.wynprice.cursemaven:CurseMaven:2.1.0"
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 plugins {
@@ -43,6 +48,7 @@ plugins {
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "com.matthewprenger.cursegradle"
 apply plugin: 'com.wynprice.cursemaven'
+apply plugin: 'org.spongepowered.mixin'
 
 // Load properties file, easier to manage versions of required dependencies
 file "build.properties" withReader {
@@ -90,6 +96,18 @@ minecraft { // Only change any of this with prior approval from the dev team!
     version = "${config.minecraft.version}-${config.forge.version}"
     runDir = "run"
     mappings = "stable_39"
+    def args = [
+            '-Dfml.coreMods.load=net.dries007.tfc.core.TFCCorePlugin',
+            '-Dmixin.hotSwap=true',
+            '-Dmixin.checks.interfaces=true'
+    ]
+    clientJvmArgs.addAll(args)
+    serverJvmArgs.addAll(args)
+}
+
+configurations {
+    embed
+    implementation.extendsFrom(embed)
 }
 
 repositories {
@@ -120,6 +138,10 @@ repositories {
         name = "CurseForge"
         url = "https://minecraft.curseforge.com/api/maven/"
     }
+    maven {
+        name = "mixins"
+        url "https://repo.spongepowered.org/maven"
+    }
 }
 
 String mcVersion = config.minecraft.version
@@ -140,6 +162,16 @@ dependencies {
     //compileOnly "mcp.mobius.waila:Hwyla:${config.HWYLA.version}_${config.minecraft.version}"
     deobfProvided "mcjty.theoneprobe:TheOneProbe-${shortVersion}:${config.TOP.version}"
     deobfProvided "vazkii.patchouli:Patchouli:${config.patchouli.version}"
+
+    implementation ("org.spongepowered:mixin:0.8") {
+        exclude module: "asm-commons"
+        exclude module: "asm-tree"
+        exclude module: "launchwrapper"
+        exclude module: "guava"
+        exclude module: "log4j-core"
+        exclude module: "gson"
+        exclude module: "commons-io"
+    }
 }
 
 processResources {
@@ -200,6 +232,21 @@ task deobfJar(type: Jar, dependsOn: 'jar') {
 
 artifacts {
     archives deobfJar // Default jars are already in there.
+}
+
+jar {
+    from (configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'LICENSE.txt', 'META-INF/MANIFSET.MF', 'META-INF/maven/**', 'META-INF/*.RSA', 'META-INF/*.SF'
+    }
+    manifest {
+        attributes([
+                "FMLCorePluginContainsFMLMod": true,
+                "FMLCorePlugin": 'net.dries007.tfc.core.TFCCorePlugin',
+                "ForceLoadAsMod": true,
+                "TweakClass": 'org.spongepowered.asm.launch.MixinTweaker',
+                "FMLAT": "tfc_at.cfg"
+        ])
+    }
 }
 
 project.tasks.withType(Jar) { jarTask -> // For all jar tasks

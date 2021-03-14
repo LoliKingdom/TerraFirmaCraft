@@ -98,7 +98,7 @@ public final class BlocksTFC
     private static ImmutableList<ItemBlock> allInventoryItemBlocks;
     private static ImmutableList<ItemBlockBarrel> allBarrelItemBlocks;
 
-    private static ImmutableList<BlockFluidBase> allFluidBlocks;
+    private static ImmutableList<Block> allFluidBlocks;
     private static ImmutableList<BlockRockVariant> allBlockRockVariants;
     private static ImmutableList<BlockOreTFC> allOreBlocks;
     private static ImmutableList<BlockWallTFC> allWallBlocks;
@@ -146,7 +146,7 @@ public final class BlocksTFC
         return allBarrelItemBlocks;
     }
 
-    public static ImmutableList<BlockFluidBase> getAllFluidBlocks()
+    public static ImmutableList<Block> getAllFluidBlocks()
     {
         return allFluidBlocks;
     }
@@ -353,10 +353,9 @@ public final class BlocksTFC
 
         {
             // Apparently this is the way we're supposed to do things even though the fluid registry defaults. So we'll do it this way.
-            Builder<BlockFluidBase> b = ImmutableList.builder();
+            Builder<Block> b = ImmutableList.builder();
             b.add(
                 register(r, "fluid/hot_water", new BlockFluidHotWater()),
-                register(r, "fluid/fresh_water", new BlockFluidWater(FluidsTFC.FRESH_WATER.get(), Material.WATER, false)),
                 register(r, "fluid/salt_water", new BlockFluidWater(FluidsTFC.SALT_WATER.get(), Material.WATER, true))
             );
             for (FluidWrapper wrapper : FluidsTFC.getAllAlcoholsFluids())

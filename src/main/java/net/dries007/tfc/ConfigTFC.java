@@ -631,7 +631,7 @@ public final class ConfigTFC
 
             @Config.Comment("List of fluids allowed to be picked up by wooden bucket")
             @Config.LangKey("config." + MOD_ID + ".general.misc.woodenBucketWhitelist")
-            public String[] woodenBucketWhitelist = new String[] {"fresh_water", "hot_water", "salt_water", "water", "limewater", "tannin", "olive_oil", "olive_oil_water", "vinegar", "rum", "beer", "whiskey", "rye_whiskey", "corn_whiskey", "sake", "vodka", "cider", "brine", "milk", "milk_curdled", "milk_vinegar", "white_dye", "orange_dye", "magenta_dye", "light_blue_dye", "yellow_dye", "lime_dye", "pink_dye", "gray_dye", "light_gray_dye", "cyan_dye", "purple_dye", "blue_dye", "brown_dye", "green_dye", "red_dye", "black_dye"};
+            public String[] woodenBucketWhitelist = new String[] {"hot_water", "salt_water", "water", "limewater", "tannin", "olive_oil", "olive_oil_water", "vinegar", "rum", "beer", "whiskey", "rye_whiskey", "corn_whiskey", "sake", "vodka", "cider", "brine", "milk", "milk_curdled", "milk_vinegar", "white_dye", "orange_dye", "magenta_dye", "light_blue_dye", "yellow_dye", "lime_dye", "pink_dye", "gray_dye", "light_gray_dye", "cyan_dye", "purple_dye", "blue_dye", "brown_dye", "green_dye", "red_dye", "black_dye"};
 
             @Config.Comment("List of fluids allowed to be picked up by blue steel bucket")
             @Config.LangKey("config." + MOD_ID + ".general.misc.blueSteelBucketWhitelist")
@@ -639,7 +639,7 @@ public final class ConfigTFC
 
             @Config.Comment("List of fluids allowed to be picked up by red steel bucket")
             @Config.LangKey("config." + MOD_ID + ".general.misc.redSteelBucketWhitelist")
-            public String[] redSteelBucketWhitelist = new String[] {"fresh_water", "hot_water", "salt_water", "water"};
+            public String[] redSteelBucketWhitelist = new String[] {"hot_water", "salt_water", "water"};
 
             @Config.Comment("Entities that can be plucked for feathers.")
             @Config.LangKey("config." + MOD_ID + ".general.misc.pluckableEntities")
@@ -759,7 +759,7 @@ public final class ConfigTFC
 
             @Config.Comment("List of fluids allowed to be inserted into a barrel.")
             @Config.LangKey("config." + MOD_ID + ".devices.barrel.fluidWhitelist")
-            public String[] fluidWhitelist = new String[] {"fresh_water", "hot_water", "salt_water", "water", "limewater", "tannin", "olive_oil", "olive_oil_water", "vinegar", "rum", "beer", "whiskey", "rye_whiskey", "corn_whiskey", "sake", "vodka", "cider", "brine", "milk", "milk_curdled", "milk_vinegar", "white_dye", "orange_dye", "magenta_dye", "light_blue_dye", "yellow_dye", "lime_dye", "pink_dye", "gray_dye", "light_gray_dye", "cyan_dye", "purple_dye", "blue_dye", "brown_dye", "green_dye", "red_dye", "black_dye"};
+            public String[] fluidWhitelist = new String[] {"hot_water", "salt_water", "water", "limewater", "tannin", "olive_oil", "olive_oil_water", "vinegar", "rum", "beer", "whiskey", "rye_whiskey", "corn_whiskey", "sake", "vodka", "cider", "brine", "milk", "milk_curdled", "milk_vinegar", "white_dye", "orange_dye", "magenta_dye", "light_blue_dye", "yellow_dye", "lime_dye", "pink_dye", "gray_dye", "light_gray_dye", "cyan_dye", "purple_dye", "blue_dye", "brown_dye", "green_dye", "red_dye", "black_dye"};
         }
 
         public static final class BlastFurnaceCFG
@@ -1050,6 +1050,10 @@ public final class ConfigTFC
             @Config.Comment("Render distance for flat placed items (rocks, sticks). Default: 32 Blocks")
             @Config.LangKey("config." + MOD_ID + ".client.render.placedItemFlatDistance")
             public int placedItemFlatDistance = 32;
+
+            @Config.Comment("Whether to tint vanilla water of our own colour. Disable this if you're using a resource pack.")
+            @Config.LangKey("config." + MOD_ID + ".client.render.tintVanillaWater")
+            public boolean tintVanillaWater = true;
         }
     }
 

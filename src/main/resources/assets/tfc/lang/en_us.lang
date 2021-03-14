@@ -887,6 +887,9 @@ config.tfc.client.grassColor.seasonColorWinter.tooltip=The winter color ARGB cod
 config.tfc.client.render=Render Settings
 config.tfc.client.render.placedItemFlatDistance=Render distance for flat placed items.
 
+config.tfc.client.render.tintVanillaWater=Tint Vanilla Water.
+config.tfc.client.render.tintVanillaWater.tooltip=Whether to tint vanilla water of our own colour
+
 ## Animals
 config.tfc.animals=Animals Settings
 config.tfc.animals.tooltip=Various animals configuration like gestation periods, number of children and spawn rarity.

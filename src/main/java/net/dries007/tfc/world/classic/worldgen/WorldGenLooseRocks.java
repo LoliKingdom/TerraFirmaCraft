@@ -122,7 +122,7 @@ public class WorldGenLooseRocks implements IWorldGenerator
             if (BlocksTFC.isSoil(downState) && downState.isSideSolid(world, downPos, EnumFacing.UP)) {
                 if (vein != null && vein.getType() != null) {
                     Material ore = Material.get(vein.getType().getOre().toString());
-                    if (ore != null) {
+                    if (ore != null && ore.hasType(BlockMaterialType.ORE_SURFACE_ROCK)) { // TODO
                         world.setBlockState(pos, ore.getBlock(BlockMaterialType.ORE_SURFACE_ROCK), 2);
                     }
                 } else {

@@ -256,11 +256,11 @@ public class TEBarrel extends TETickableInventory implements ITickable, ICalenda
                     inventory.setStackInSlot(SLOT_FLUID_CONTAINER_IN, result.getResult());
                 }
 
-                Fluid freshWater = FluidRegistry.getFluid("fresh_water");
+                // Fluid freshWater = FluidRegistry.getFluid("fresh_water");
 
-                if (!sealed && world.isRainingAt(pos.up()) && (tank.getFluid() == null || tank.getFluid().getFluid() == freshWater))
+                if (!sealed && world.isRainingAt(pos.up()) && (tank.getFluid() == null || tank.getFluid().getFluid() == FluidRegistry.WATER))
                 {
-                    tank.fill(new FluidStack(freshWater, 10), true);
+                    tank.fill(new FluidStack(FluidRegistry.WATER, 10), true);
                 }
 
                 if (inventory.getStackInSlot(SLOT_ITEM) == ItemStack.EMPTY && !surplus.isEmpty())

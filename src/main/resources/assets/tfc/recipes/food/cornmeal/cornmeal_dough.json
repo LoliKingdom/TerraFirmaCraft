@@ -3,7 +3,7 @@
   "ingredients": [
     {
       "type": "tfc:fluid",
-      "fluid": "fresh_water"
+      "fluid": "water"
     },
     {
       "type": "forge:ore_dict",

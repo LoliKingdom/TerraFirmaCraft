@@ -132,7 +132,7 @@ public final class FluidsTFC
 
     public static void registerFluids()
     {
-        FRESH_WATER = registerFluid(new Fluid("fresh_water", STILL, FLOW, 0xFF296ACD)).with(DrinkableProperty.DRINKABLE, player -> {
+        FRESH_WATER = getWrapper(FluidRegistry.WATER).with(DrinkableProperty.DRINKABLE, player -> {
             if (player.getFoodStats() instanceof FoodStatsTFC)
             {
                 ((FoodStatsTFC) player.getFoodStats()).addThirst(40);

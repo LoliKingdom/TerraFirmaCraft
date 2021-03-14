@@ -44,11 +44,20 @@ public class FluidIngredient extends Ingredient
         return output.toArray(new ItemStack[0]);
     }
 
+    private static String getCorrectedWater(String fluidName)
+    {
+        if (fluidName.equals("fresh_water"))
+        {
+            fluidName = "water";
+        }
+        return fluidName;
+    }
+
     private final FluidStack fluid;
 
     public FluidIngredient(String fluidName)
     {
-        super(getValidBuckets(new FluidStack(FluidRegistry.getFluid(fluidName), Fluid.BUCKET_VOLUME)));
+        super(getValidBuckets(new FluidStack(FluidRegistry.getFluid(getCorrectedWater(fluidName)), Fluid.BUCKET_VOLUME)));
         fluid = FluidRegistry.getFluidStack(fluidName, Fluid.BUCKET_VOLUME);
     }
 
