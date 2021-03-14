@@ -292,7 +292,7 @@ public final class CommonEventHandler
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBreakProgressEvent(BreakSpeed event)
     {
         EntityPlayer player = event.getEntityPlayer();
