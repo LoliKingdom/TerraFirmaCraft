@@ -84,6 +84,7 @@ public class BlockBellows extends Block
         TEBellows te = Helpers.getTE(worldIn, pos, TEBellows.class);
         if (te != null)
         {
+            playerIn.addExhaustion(0.02F);
             return te.onRightClick();
         }
         return true;

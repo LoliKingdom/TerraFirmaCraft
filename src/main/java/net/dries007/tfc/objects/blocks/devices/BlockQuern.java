@@ -53,11 +53,11 @@ public class BlockQuern extends Block implements IItemSize, IHighlightHandler
 
     private static final AxisAlignedBB INPUT_SLOT_AABB = new AxisAlignedBB(0.375D, 0.86D, 0.375D, 0.625D, 1.015D, 0.625D);
 
+    private static SelectionPlace getPlayerSelection(World world, BlockPos pos, EntityPlayer player)
     /**
      * Gets the selection place player is looking at
      * Used for interaction / selection box drawing
      */
-    private static SelectionPlace getPlayerSelection(World world, BlockPos pos, EntityPlayer player)
     {
         // This will compute a line from the camera center (crosshair) starting at the player eye pos and a little after this block
         // so we can grab the exact point regardless from which face player is looking from
@@ -217,6 +217,7 @@ public class BlockQuern extends Block implements IItemSize, IHighlightHandler
                     if (selection == SelectionPlace.HANDLE)
                     {
                         teQuern.grind();
+                        playerIn.addExhaustion(0.02F);
                         world.playSound(null, pos, TFCSounds.QUERN_USE, SoundCategory.BLOCKS, 1, 1 + ((world.rand.nextFloat() - world.rand.nextFloat()) / 16));
                         return true;
                     }
