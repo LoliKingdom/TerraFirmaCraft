@@ -49,7 +49,7 @@ import zone.rong.zairyou.api.block.metablock.AbstractMetaBlock;
 import zone.rong.zairyou.api.block.metablock.MutableMetaBlockBuilder;
 import zone.rong.zairyou.api.client.Bakery;
 import zone.rong.zairyou.api.client.IModelOverride;
-import zone.rong.zairyou.api.ore.SurfaceOreRockBlock;
+import zone.rong.zairyou.api.ore.block.SurfaceOreRockBlock;
 
 public class BlockSurfaceRock extends AbstractMetaBlock<RockProperty, Rock, MetaItemBlock> implements IModelOverride
 {
@@ -58,7 +58,7 @@ public class BlockSurfaceRock extends AbstractMetaBlock<RockProperty, Rock, Meta
     static
     {
         MAP = new MutableMetaBlockBuilder<>("surface_rock", BlockSurfaceRock.class, Material.ROCK, RockProperty.class)
-            .entries(TFCRegistries.ROCKS.getValuesCollection().toArray(new Rock[0])).build();
+            .entries(TFCRegistries.ROCKS.getValuesCollection()).build();
     }
 
     public static IBlockState get(Rock rock)

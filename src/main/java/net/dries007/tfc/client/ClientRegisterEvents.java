@@ -282,11 +282,6 @@ public final class ClientRegisterEvents
 
         blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> BlockFarmlandTFC.TINT[state.getValue(BlockFarmlandTFC.MOISTURE)],
             BlocksTFC.getAllBlockRockVariants().stream().filter(x -> x.getType() == Rock.Type.FARMLAND).toArray(BlockRockVariant[]::new));
-
-        if (ConfigTFC.Client.RENDER.tintVanillaWater)
-        {
-            blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> 0x296ACD, Blocks.WATER, Blocks.FLOWING_WATER);
-        }
     }
 
     @SubscribeEvent

@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import net.dries007.tfc.objects.blocks.stone.BlockFarmlandTFC;
-import zone.rong.zairyou.api.ore.SurfaceOreRockBlock;
+import zone.rong.zairyou.api.ore.block.SurfaceOreRockBlock;
 
 public class BlockStick extends Block
 {

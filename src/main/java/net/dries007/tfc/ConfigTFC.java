@@ -1050,10 +1050,6 @@ public final class ConfigTFC
             @Config.Comment("Render distance for flat placed items (rocks, sticks). Default: 32 Blocks")
             @Config.LangKey("config." + MOD_ID + ".client.render.placedItemFlatDistance")
             public int placedItemFlatDistance = 32;
-
-            @Config.Comment("Whether to tint vanilla water of our own colour. Disable this if you're using a resource pack.")
-            @Config.LangKey("config." + MOD_ID + ".client.render.tintVanillaWater")
-            public boolean tintVanillaWater = true;
         }
     }
 
