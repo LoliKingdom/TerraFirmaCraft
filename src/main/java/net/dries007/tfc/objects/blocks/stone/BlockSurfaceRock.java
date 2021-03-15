@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -211,21 +210,29 @@ public class BlockSurfaceRock extends AbstractMetaBlock<RockProperty, Rock, Meta
     @Override
     public void onModelBake(ModelBakeEvent event)
     {
-        Bakery.ModelType modelType = new Bakery.ModelType(TerraFirmaCraft.MOD_ID, "block/surface_rock/stone");
+        Bakery.ModelType[] modelTypes = new Bakery.ModelType[4];
+        for (int i = 0; i < 4; i++)
+        {
+            modelTypes[i] = new Bakery.ModelType(TerraFirmaCraft.MOD_ID, "block/surface_rock/" + i);
+        }
         final ModelRotation[] rots = ModelRotation.values();
         this.blockState.getValidStates().forEach(s ->
         {
             Rock rock = s.getValue(freezableProperty);
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
-            IntStream.range(0, 4).forEach(i ->
+            for (Bakery.ModelType modelType : modelTypes)
             {
-                builder.add(Bakery.INSTANCE.getBlockDepartment()
-                    .template(modelType)
-                    .prepareTexture("layer0", new ResourceLocation(TerraFirmaCraft.MOD_ID, "blocks/stonetypes/raw/" + rock.toString()))
-                    .mutate(m -> new ModelSurfaceRock(m, rots[i]))
-                    .bake()
-                    .take(), 1);
-            });
+                for (int i = 0; i < 4; i++)
+                {
+                    final int j = i;
+                    builder.add(Bakery.INSTANCE.getBlockDepartment()
+                        .template(modelType)
+                        .prepareTexture("layer0", new ResourceLocation(TerraFirmaCraft.MOD_ID, "blocks/stonetypes/raw/" + rock.toString()))
+                        .mutate(m -> new ModelSurfaceRock(m, rots[j]))
+                        .bake()
+                        .take(), 1);
+                }
+            }
             event.getModelRegistry().putObject(new ModelResourceLocation(this.getRegistryName().toString() + "_" + rock.getRegistryName().toString()), builder.build());
         });
     }
