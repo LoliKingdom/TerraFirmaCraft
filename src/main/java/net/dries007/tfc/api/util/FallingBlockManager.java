@@ -309,7 +309,7 @@ public class FallingBlockManager
                     if (spec.collapseChecker.canCollapse(world, checking)) // Still needs this to check if this can collapse without support (ie: no blocks below)
                     {
                         collapseArea(world, checking);
-                        world.playSound(null, pos, TFCSounds.ROCK_SLIDE_LONG, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        world.playSound(null, pos, TFCSounds.ROCK_SLIDE_LONG, SoundCategory.BLOCKS, 0.3F, 1.0F);
                         return true; // Don't need to check other blocks
                     }
                 }

@@ -68,7 +68,7 @@ public class WorldTracker implements ICapabilitySerializable<NBTTagCompound>
                     collapse.nextPositions.clear();
                     if (!updatedPositions.isEmpty())
                     {
-                        world.playSound(null, collapse.centerPos, TFCSounds.ROCK_SLIDE_SHORT, SoundCategory.BLOCKS, 0.6f, 1.0f);
+                        world.playSound(null, collapse.centerPos, TFCSounds.ROCK_SLIDE_SHORT, SoundCategory.BLOCKS, 0.5F, 1.0f);
                         collapse.nextPositions.addAll(updatedPositions);
                         collapse.radiusSquared *= 0.8; // lower radius each successive time
                     }

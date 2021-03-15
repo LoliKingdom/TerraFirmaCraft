@@ -142,7 +142,7 @@ public final class CommonEventHandler
         {
             if (FallingBlockManager.checkFalling(event.getWorld(), event.getPos(), state))
             {
-                event.getWorld().playSound(null, event.getPos(), spec.getSoundEvent(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+                event.getWorld().playSound(null, event.getPos(), spec.getSoundEvent(), SoundCategory.BLOCKS, 0.5F, 1.0F);
             }
         }
         else
@@ -156,7 +156,7 @@ public final class CommonEventHandler
                 {
                     if (FallingBlockManager.checkFalling(event.getWorld(), offsetPos, notifiedState))
                     {
-                        event.getWorld().playSound(null, offsetPos, notifiedSpec.getSoundEvent(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        event.getWorld().playSound(null, offsetPos, notifiedSpec.getSoundEvent(), SoundCategory.BLOCKS, 0.5F, 1.0F);
                     }
                 }
             }
@@ -176,7 +176,7 @@ public final class CommonEventHandler
         {
             if (FallingBlockManager.checkFalling(event.getWorld(), event.getPos(), state))
             {
-                event.getWorld().playSound(null, event.getPos(), spec.getSoundEvent(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+                event.getWorld().playSound(null, event.getPos(), spec.getSoundEvent(), SoundCategory.BLOCKS, 0.5F, 1.0F);
             }
         }
     }
