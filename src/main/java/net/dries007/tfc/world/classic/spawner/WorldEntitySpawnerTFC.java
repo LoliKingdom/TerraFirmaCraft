@@ -5,6 +5,7 @@
 
 package net.dries007.tfc.world.classic.spawner;
 
+import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.function.IntSupplier;
 
@@ -15,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -23,6 +25,7 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.dries007.tfc.ConfigTFC;
 import net.dries007.tfc.api.types.ICreatureTFC;
 import net.dries007.tfc.objects.entity.animal.*;
@@ -46,6 +49,8 @@ public final class WorldEntitySpawnerTFC
      * Supplier so we get the updated config value
      */
     public static final Map<Class<? extends EntityLiving>, IntSupplier> LIVESTOCK;
+
+    static SoftReference<List<EntityEntry>> tfcCreatures;
 
     static
     {
@@ -78,7 +83,6 @@ public final class WorldEntitySpawnerTFC
         // Although it worked in dev and with only minor mods, I had too much trouble with a larger modpack
     }
 
-
     /**
      * Experimental: Handles wild livestock respawning
      * This event runs after CheckSpawn, which means you can safely assume that all other restrictions passed (biome, temp, rainfall, etc)
@@ -86,28 +90,20 @@ public final class WorldEntitySpawnerTFC
     @SubscribeEvent
     public static void onLivestockRespawn(LivingSpawnEvent.SpecialSpawn event)
     {
-        World worldIn = event.getWorld();
         EntityLiving entity = (EntityLiving) event.getEntity();
-
-        event.getWorld().getBiome(new BlockPos(event.getX(), event.getY(), event.getZ())).getSpawnableList(EnumCreatureType.CREATURE);
-
-        if (LIVESTOCK.containsKey(entity.getClass()))
+        Class<? extends EntityLiving> entityClass = entity.getClass();
+        if (LIVESTOCK.containsKey(entityClass))
         {
+            World worldIn = event.getWorld();
             event.setResult(Event.Result.ALLOW); // Always cancel vanilla's spawning since we take it from here
             AnimalRespawnWorldData data = AnimalRespawnWorldData.get(worldIn);
-            ChunkPos pos = new ChunkPos(new BlockPos(event.getX(), event.getY(), event.getZ()));
+            ChunkPos pos = new ChunkPos(((int) event.getX()) >> 4, ((int) event.getZ()) >> 4);
             long lastSpawnTick = data.getLastRespawnTick(entity, pos);
-            long deltaTicks = CalendarTFC.PLAYER_TIME.getTicks() - lastSpawnTick;
-            int cooldown = LIVESTOCK.get(entity.getClass()).getAsInt();
-            if (lastSpawnTick <= 0 || cooldown <= deltaTicks)
+            if (lastSpawnTick <= 0 || LIVESTOCK.get(entityClass).getAsInt() <= CalendarTFC.PLAYER_TIME.getTicks() - lastSpawnTick)
             {
                 data.setLastRespawnTick(entity, pos, CalendarTFC.PLAYER_TIME.getTicks());
-                int centerX = (int) event.getX();
-                int centerZ = (int) event.getZ();
-                int diameterX = 16;
-                int diameterZ = 16;
                 //noinspection ConstantConditions
-                doGroupSpawning(EntityRegistry.getEntry(entity.getClass()), worldIn, centerX, centerZ, diameterX, diameterZ, worldIn.rand);
+                doGroupSpawning(EntityRegistry.getEntry(entityClass), entity, worldIn, (int) event.getX(), (int) event.getZ(), 16, 16, worldIn.rand); // centerX, centerZ, diameterX, diameterZ
             }
         }
     }
@@ -131,32 +127,29 @@ public final class WorldEntitySpawnerTFC
         final float floraDensity = ChunkDataTFC.getFloraDensity(worldIn, chunkBlockPos);
         final float floraDiversity = ChunkDataTFC.getFloraDiversity(worldIn, chunkBlockPos);
 
-        // Spawns only one group
-        ForgeRegistries.ENTITIES.getValuesCollection().stream()
-            .filter(x -> {
-                if (ICreatureTFC.class.isAssignableFrom(x.getEntityClass()))
-                {
-                    Entity ent = x.newInstance(worldIn);
-                    if (ent instanceof ICreatureTFC)
-                    {
-                        int weight = ((ICreatureTFC) ent).getSpawnWeight(biomeIn, temperature, rainfall, floraDensity, floraDiversity);
-                        return weight > 0 && randomIn.nextInt(weight) == 0;
-                    }
+        if (tfcCreatures == null || tfcCreatures.get() == null) {
+            List<EntityEntry> refEntries = new ObjectArrayList<>();
+            for (EntityEntry entry : ForgeRegistries.ENTITIES) {
+                if (ICreatureTFC.class.isAssignableFrom(entry.getEntityClass())) {
+                    refEntries.add(entry);
                 }
-                return false;
-            }).findFirst()
-            .ifPresent(entityEntry -> doGroupSpawning(entityEntry, worldIn, centerX, centerZ, diameterX, diameterZ, randomIn));
+            }
+            tfcCreatures = new SoftReference<>(refEntries);
+        }
+
+        for (EntityEntry entry : tfcCreatures.get()) {
+            ICreatureTFC entity = (ICreatureTFC) entry.newInstance(worldIn);
+            int weight = entity.getSpawnWeight(biomeIn, temperature, rainfall, floraDensity, floraDiversity);
+            if (weight > 0 && randomIn.nextInt(weight) == 0) {
+                doGroupSpawning(entry, (EntityLiving) entity, worldIn, centerX, centerZ, diameterX, diameterZ, randomIn);
+                break;
+            }
+        }
     }
 
-    private static void doGroupSpawning(EntityEntry entityEntry, World worldIn, int centerX, int centerZ, int diameterX, int diameterZ, Random randomIn)
-    {
-        List<EntityLiving> group = new ArrayList<>();
-        EntityLiving creature = (EntityLiving)entityEntry.newInstance(worldIn);
-        if (!(creature instanceof ICreatureTFC))
-        {
-            return; // Make sure to not crash
-        }
-        ICreatureTFC creatureTFC = (ICreatureTFC) creature;
+    private static void doGroupSpawning(EntityEntry entry, EntityLiving livingEntity, World worldIn, int centerX, int centerZ, int diameterX, int diameterZ, Random randomIn) {
+        final List<EntityLiving> group = new ObjectArrayList<>();
+        ICreatureTFC creatureTFC = (ICreatureTFC) livingEntity;
         int fallback = 5; // Fallback measure if some mod completely deny this entity spawn
         int individuals = Math.max(1, creatureTFC.getMinGroupSize()) + randomIn.nextInt(creatureTFC.getMaxGroupSize() - Math.max(0, creatureTFC.getMinGroupSize() - 1));
         while (individuals > 0)
@@ -164,10 +157,10 @@ public final class WorldEntitySpawnerTFC
             int j = centerX + randomIn.nextInt(diameterX);
             int k = centerZ + randomIn.nextInt(diameterZ);
             BlockPos blockpos = worldIn.getTopSolidOrLiquidBlock(new BlockPos(j, 0, k));
-            creature.setLocationAndAngles((float) j + 0.5F, blockpos.getY(), (float) k + 0.5F, randomIn.nextFloat() * 360.0F, 0.0F);
-            if (creature.getCanSpawnHere()) // fix entities spawning inside walls
+            livingEntity.setLocationAndAngles((float) j + 0.5F, blockpos.getY(), (float) k + 0.5F, randomIn.nextFloat() * 360.0F, 0.0F);
+            if (livingEntity.getCanSpawnHere()) // fix entities spawning inside walls
             {
-                if (net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(creature, worldIn, j + 0.5f, (float) blockpos.getY(), k + 0.5f, null) == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
+                if (ForgeEventFactory.canEntitySpawn(livingEntity, worldIn, j + 0.5f, (float) blockpos.getY(), k + 0.5f, null) == Event.Result.DENY)
                 {
                     if (--fallback > 0)
                     {
@@ -180,14 +173,14 @@ public final class WorldEntitySpawnerTFC
                 }
                 fallback = 5;
                 // Spawn pass! let's continue
-                worldIn.spawnEntity(creature);
-                group.add(creature);
-                creature.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(creature)), null);
+                worldIn.spawnEntity(livingEntity);
+                group.add(livingEntity);
+                livingEntity.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(livingEntity)), null);
                 if (--individuals > 0)
                 {
                     //We still need to spawn more
-                    creature = (EntityLiving)entityEntry.newInstance(worldIn);
-                    creatureTFC = (ICreatureTFC) creature;
+                    livingEntity = (EntityLiving) entry.newInstance(worldIn);
+                    creatureTFC = (ICreatureTFC) livingEntity;
                 }
             }
             else
@@ -201,4 +194,5 @@ public final class WorldEntitySpawnerTFC
         // Apply the group spawning mechanics!
         creatureTFC.getGroupingRules().accept(group, randomIn);
     }
+
 }
