@@ -6,7 +6,7 @@
 package net.dries007.tfc.world.classic.spawner;
 
 import java.util.*;
-import java.util.function.Supplier;
+import java.util.function.IntSupplier;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -45,7 +45,7 @@ public final class WorldEntitySpawnerTFC
      * Handles livestock cooldown time
      * Supplier so we get the updated config value
      */
-    public static final Map<Class<? extends EntityLiving>, Supplier<Integer>> LIVESTOCK;
+    public static final Map<Class<? extends EntityLiving>, IntSupplier> LIVESTOCK;
 
     static
     {
@@ -98,7 +98,7 @@ public final class WorldEntitySpawnerTFC
             ChunkPos pos = new ChunkPos(new BlockPos(event.getX(), event.getY(), event.getZ()));
             long lastSpawnTick = data.getLastRespawnTick(entity, pos);
             long deltaTicks = CalendarTFC.PLAYER_TIME.getTicks() - lastSpawnTick;
-            long cooldown = LIVESTOCK.get(entity.getClass()).get();
+            int cooldown = LIVESTOCK.get(entity.getClass()).getAsInt();
             if (lastSpawnTick <= 0 || cooldown <= deltaTicks)
             {
                 data.setLastRespawnTick(entity, pos, CalendarTFC.PLAYER_TIME.getTicks());
