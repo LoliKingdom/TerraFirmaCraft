@@ -5,7 +5,6 @@
 
 package net.dries007.tfc.util.forge;
 
-import java.util.LinkedList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -16,26 +15,39 @@ import net.minecraftforge.common.util.INBTSerializable;
 @ParametersAreNonnullByDefault
 public class ForgeSteps implements INBTSerializable<NBTTagCompound>
 {
-    private final LinkedList<ForgeStep> steps;
+    private final byte[] steps;
 
     public ForgeSteps()
     {
-        steps = new LinkedList<>();
+        steps = new byte[4];
         reset();
+    }
+
+    public ForgeSteps(byte[] steps)
+    {
+        this.steps = steps.clone();
     }
 
     public void reset()
     {
-        for (int i = 0; i < 3; i++) addStep(null);
+        steps[3] = 0; // Reset pointer index to first
+        for (int i = 0; i < 3; i++)
+        {
+            addStep(-1);
+        }
     }
 
     public void addStep(@Nullable ForgeStep step)
     {
-        steps.add(step);
-        while (steps.size() > 3)
-        {
-            steps.remove();
-        }
+        byte pointer = steps[3];
+        steps[pointer] = step == null ? -1 : (byte) step.ordinal();
+        steps[3] = ++pointer > 3 ? 0 : pointer;
+    }
+
+    public void addStep(int step) {
+        byte pointer = steps[3];
+        steps[pointer] = (byte) step;
+        steps[3] = ++pointer > 3 ? 0 : pointer;
     }
 
     @Override
@@ -43,9 +55,10 @@ public class ForgeSteps implements INBTSerializable<NBTTagCompound>
     public NBTTagCompound serializeNBT()
     {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("last", getStepInt(0));
-        nbt.setInteger("second", getStepInt(1));
-        nbt.setInteger("third", getStepInt(2));
+        nbt.setByte("last", steps[0]);
+        nbt.setByte("second", steps[1]);
+        nbt.setByte("third", steps[2]);
+        nbt.setByte("pointer", steps[3]);
         return nbt;
     }
 
@@ -54,25 +67,23 @@ public class ForgeSteps implements INBTSerializable<NBTTagCompound>
     {
         if (nbt != null)
         {
-            addStep(ForgeStep.valueOf(nbt.getInteger("last")));
-            addStep(ForgeStep.valueOf(nbt.getInteger("second")));
-            addStep(ForgeStep.valueOf(nbt.getInteger("third")));
+            addStep(nbt.getByte("last"));
+            addStep(nbt.getByte("second"));
+            addStep(nbt.getByte("third"));
+            addStep(nbt.getByte("pointer"));
         }
     }
 
     @Nonnull
     public ForgeSteps copy()
     {
-        ForgeSteps newSteps = new ForgeSteps();
-        for (ForgeStep step : this.steps)
-            newSteps.addStep(step);
-        return newSteps;
+        return new ForgeSteps(this.steps);
     }
 
     @Nullable
     public ForgeStep getStep(int idx)
     {
-        return steps.get(idx);
+        return ForgeStep.valueOf(steps[idx]);
     }
 
     @Override
@@ -88,24 +99,13 @@ public class ForgeSteps implements INBTSerializable<NBTTagCompound>
      */
     public boolean hasWork()
     {
-        for (ForgeStep step : steps)
+        for (byte step : steps)
         {
-            if (step != null)
+            if (step != -1)
             {
                 return true;
             }
         }
         return false;
-    }
-
-    private int getStepInt(int idx)
-    {
-        ForgeStep step = steps.get(idx);
-        return step == null ? -1 : step.ordinal();
-    }
-
-    private void setStepInt(int position, int step)
-    {
-        steps.set(position, ForgeStep.valueOf(step));
     }
 }
