@@ -34,6 +34,7 @@ public class TrackedChunkPrimer extends ChunkPrimer
     private static final IBlockState SANDY_GRASS = BOPBlocks.grass.getDefaultState().withProperty(BlockBOPGrass.VARIANT, BlockBOPGrass.BOPGrassType.SANDY);
     private static final IBlockState GRAVEL = Blocks.GRAVEL.getDefaultState();
     private static final IBlockState SAND = Blocks.SAND.getDefaultState();
+    private static final IBlockState SANDSTONE = Blocks.SANDSTONE.getDefaultState();
     private static final IBlockState MUD = BOPBlocks.mud.getDefaultState().withProperty(BlockBOPMud.VARIANT, BlockBOPMud.MudType.MUD); // Why...?
     private static final IBlockState WATER = Blocks.WATER.getDefaultState();
     private static final IBlockState SALT_WATER = FluidsTFC.SALT_WATER.get().getBlock().getDefaultState();
@@ -108,7 +109,7 @@ public class TrackedChunkPrimer extends ChunkPrimer
         {
             trackingArray[x << 12 | z << 8 | y] = -1;
         }
-        else if (state == STONE || state == OVERGROWN_STONE)
+        else if (state == STONE || state == OVERGROWN_STONE || state == SANDSTONE)
         {
             trackingArray[x << 12 | z << 8 | y] = 1;
 
