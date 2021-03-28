@@ -5,10 +5,7 @@
 
 package net.dries007.tfc.world.classic.chunkdata;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +19,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistry;
 
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.dries007.tfc.ConfigTFC;
+import net.dries007.tfc.TerraFirmaCraft;
 import net.dries007.tfc.api.registries.TFCRegistries;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.api.types.Tree;
@@ -46,6 +45,7 @@ public final class ChunkDataTFC
     {
         Arrays.fill(EMPTY.drainageLayer, DataLayer.ERROR);
         Arrays.fill(EMPTY.stabilityLayer, DataLayer.ERROR);
+        EMPTY.seaLevelOffset = new int[256];
         Arrays.fill(EMPTY.seaLevelOffset, -1);
     }
 
@@ -122,15 +122,15 @@ public final class ChunkDataTFC
     private final int[] rockLayer3 = new int[256];
     private final DataLayer[] drainageLayer = new DataLayer[256]; // To be removed / replaced?
     private final DataLayer[] stabilityLayer = new DataLayer[256]; // To be removed / replaced?
-    private final int[] seaLevelOffset = new int[256];
+    private int[] seaLevelOffset;
     private boolean initialized = false;
-    private int fishPopulation = FISH_POP_MAX; // todo: Set this based on biome? temp? rng?
+    private final int fishPopulation = FISH_POP_MAX; // todo: Set this based on biome? temp? rng?
     private float rainfall;
     private float regionalTemp;
     private float avgTemp;
     private float floraDensity;
     private float floraDiversity;
-    private Set<Vein> generatedVeins = new HashSet<>();
+    private Set<Vein> generatedVeins;
     private int chunkWorkage;
     private long protectedTicks; // Used for hostile spawn protection. Starts negative, increases by players in the area
     private long lastUpdateTick, lastUpdateYear; // The last time this chunk was updated by world regen
@@ -139,9 +139,34 @@ public final class ChunkDataTFC
      * INTERNAL USE ONLY.
      * No need to mark as dirty, since this will only ever be called on worldgen, before the first chunk save.
      */
+    public void setGenerationData(int[] rockLayer1, int[] rockLayer2, int[] rockLayer3, float rainfall, float regionalTemp, float avgTemp, float floraDensity, float floraDiversity)
+    {
+        this.initialized = true;
+        System.arraycopy(rockLayer1, 0, this.rockLayer1, 0, 256);
+        System.arraycopy(rockLayer2, 0, this.rockLayer2, 0, 256);
+        System.arraycopy(rockLayer3, 0, this.rockLayer3, 0, 256);
+        this.rainfall = rainfall;
+        this.regionalTemp = regionalTemp;
+        this.avgTemp = avgTemp;
+        this.floraDensity = floraDensity;
+        this.floraDiversity = floraDiversity;
+
+        this.chunkWorkage = 0;
+
+        this.lastUpdateTick = CalendarTFC.PLAYER_TIME.getTicks();
+        this.lastUpdateYear = CalendarTFC.CALENDAR_TIME.getTotalYears();
+    }
+
+    /**
+     * INTERNAL USE ONLY.
+     * No need to mark as dirty, since this will only ever be called on worldgen, before the first chunk save.
+     */
     public void setGenerationData(int[] rockLayer1, int[] rockLayer2, int[] rockLayer3, DataLayer[] stabilityLayer, DataLayer[] drainageLayer, int[] seaLevelOffset, float rainfall, float regionalTemp, float avgTemp, float floraDensity, float floraDiversity)
     {
         this.initialized = true;
+
+        this.seaLevelOffset = new int[256];
+
         System.arraycopy(rockLayer1, 0, this.rockLayer1, 0, 256);
         System.arraycopy(rockLayer2, 0, this.rockLayer2, 0, 256);
         System.arraycopy(rockLayer3, 0, this.rockLayer3, 0, 256);
@@ -154,6 +179,8 @@ public final class ChunkDataTFC
         this.avgTemp = avgTemp;
         this.floraDensity = floraDensity;
         this.floraDiversity = floraDiversity;
+
+        TerraFirmaCraft.getLog().info("TFCRainfall: {} | TFCRegionalTemp: {} | TFCAvgTemp: {} | FloraDensity: {} | FloraDiversity {}", rainfall, regionalTemp, avgTemp, floraDensity, floraDiversity);
 
         this.chunkWorkage = 0;
 
@@ -169,6 +196,10 @@ public final class ChunkDataTFC
      */
     public void markVeinGenerated(@Nonnull Vein vein)
     {
+        if (generatedVeins == null)
+        {
+            generatedVeins = new ObjectArraySet<>(1);
+        }
         generatedVeins.add(vein);
     }
 
@@ -177,7 +208,7 @@ public final class ChunkDataTFC
      */
     public Set<Vein> getGeneratedVeins()
     {
-        return generatedVeins;
+        return generatedVeins == null ? Collections.emptySet() : generatedVeins;
     }
 
     public boolean canWork(int amount)
@@ -262,6 +293,10 @@ public final class ChunkDataTFC
 
     public int getSeaLevelOffset(int x, int z)
     {
+        if (seaLevelOffset == null)
+        {
+            return -1;
+        }
         return seaLevelOffset[z << 4 | x];
     }
 
@@ -297,9 +332,10 @@ public final class ChunkDataTFC
 
     public void addSpawnProtection(int multiplier)
     {
-        if (protectedTicks < CalendarTFC.PLAYER_TIME.getTicks())
+        long playerTicks = CalendarTFC.PLAYER_TIME.getTicks();
+        if (protectedTicks < playerTicks)
         {
-            protectedTicks = CalendarTFC.PLAYER_TIME.getTicks();
+            protectedTicks = playerTicks;
         }
         protectedTicks += multiplier * 600;
     }
@@ -414,12 +450,14 @@ public final class ChunkDataTFC
             root.setTag("rockLayer1", new NBTTagIntArray(instance.rockLayer1));
             root.setTag("rockLayer2", new NBTTagIntArray(instance.rockLayer2));
             root.setTag("rockLayer3", new NBTTagIntArray(instance.rockLayer3));
+            /*
             root.setTag("seaLevelOffset", new NBTTagIntArray(instance.seaLevelOffset));
 
             root.setTag("stabilityLayer", write(instance.stabilityLayer));
             root.setTag("drainageLayer", write(instance.drainageLayer));
 
             root.setInteger("fishPopulation", instance.fishPopulation);
+            */
 
             root.setFloat("rainfall", instance.rainfall);
             root.setFloat("regionalTemp", instance.regionalTemp);
@@ -432,12 +470,15 @@ public final class ChunkDataTFC
             root.setLong("lastUpdateTick", instance.lastUpdateTick);
             root.setLong("lastUpdateYear", instance.lastUpdateYear);
 
-            NBTTagList veinList = new NBTTagList();
-            for (Vein vein : instance.generatedVeins)
+            if (instance.generatedVeins != null)
             {
-                veinList.appendTag(Vein.serialize(vein));
+                NBTTagList veinList = new NBTTagList();
+                for (Vein vein : instance.generatedVeins)
+                {
+                    veinList.appendTag(Vein.serialize(vein));
+                }
+                root.setTag("veins", veinList);
             }
-            root.setTag("veins", veinList);
 
             return root;
         }
@@ -451,12 +492,15 @@ public final class ChunkDataTFC
                 System.arraycopy(root.getIntArray("rockLayer1"), 0, instance.rockLayer1, 0, 256);
                 System.arraycopy(root.getIntArray("rockLayer2"), 0, instance.rockLayer2, 0, 256);
                 System.arraycopy(root.getIntArray("rockLayer3"), 0, instance.rockLayer3, 0, 256);
+                /*
                 System.arraycopy(root.getIntArray("seaLevelOffset"), 0, instance.seaLevelOffset, 0, 256);
 
                 read(instance.stabilityLayer, root.getByteArray("stabilityLayer"));
                 read(instance.drainageLayer, root.getByteArray("drainageLayer"));
 
                 instance.fishPopulation = root.getInteger("fishPopulation");
+
+                 */
 
                 instance.rainfall = root.getFloat("rainfall");
                 instance.regionalTemp = root.getFloat("regionalTemp");
@@ -469,12 +513,14 @@ public final class ChunkDataTFC
                 instance.lastUpdateTick = root.getLong("lastUpdateTick");
                 instance.lastUpdateYear = root.getLong("lastUpdateYear");
 
-                instance.generatedVeins = new HashSet<>();
-
-                NBTTagList veinList = root.getTagList("veins", Constants.NBT.TAG_COMPOUND);
-                for (int i = 0; i < veinList.tagCount(); i++)
+                if (root.hasKey("veins"))
                 {
-                    instance.generatedVeins.add(Vein.deserialize(veinList.getCompoundTagAt(i)));
+                    NBTTagList veinList = root.getTagList("veins", Constants.NBT.TAG_COMPOUND);
+                    instance.generatedVeins = new ObjectArraySet<>(veinList.tagCount());
+                    for (int i = 0; i < veinList.tagCount(); i++)
+                    {
+                        instance.generatedVeins.add(Vein.deserialize(veinList.getCompoundTagAt(i)));
+                    }
                 }
 
                 instance.initialized = true;

@@ -5,7 +5,6 @@
 
 package net.dries007.tfc.api.types;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Function;
@@ -18,6 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.dries007.tfc.objects.blocks.plants.*;
 import net.dries007.tfc.util.calendar.CalendarTFC;
 import net.dries007.tfc.util.calendar.Month;
@@ -105,11 +106,7 @@ public class Plant extends IForgeRegistryEntry.Impl<Plant>
         this.material = plantType.getPlantMaterial();
         this.oreDictName = Optional.ofNullable(oreDictName);
 
-        HashSet<Integer> hashSet = new HashSet<>();
-        for (int stage : stages)
-        {
-            hashSet.add(stage);
-        }
+        IntSet hashSet = new IntArraySet(stages);
         this.numStages = hashSet.size() <= 1 ? 1 : hashSet.size() - 1;
 
         setRegistryName(name);

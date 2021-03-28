@@ -152,6 +152,8 @@ dependencies {
 
     compile fileTree(include: ["*.jar"], dir: "libs")
 
+    deobfCompile "curse.maven:biomes-o-plenty:2842510"
+
     // Mod dependencies go here.
     // Do not add dependencies without prior approval from the dev team. You can update existing ones.
     deobfProvided "CraftTweaker2:CraftTweaker2-MC${strippedVersion}-Main:${config.crafttweaker.version}"

@@ -18,9 +18,9 @@ import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.BiomeColorHelper;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import biomesoplenty.common.block.BlockColoring;
 import net.dries007.tfc.ConfigTFC;
 import net.dries007.tfc.api.capability.IMoldHandler;
 import net.dries007.tfc.api.capability.food.CapabilityFood;
@@ -45,7 +46,6 @@ import net.dries007.tfc.api.types.Ore;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.client.render.*;
 import net.dries007.tfc.objects.Gem;
-import net.dries007.tfc.objects.blocks.BlockFlowerPotTFC;
 import net.dries007.tfc.objects.blocks.BlockSlabTFC;
 import net.dries007.tfc.objects.blocks.BlockThatchBed;
 import net.dries007.tfc.objects.blocks.BlocksTFC;
@@ -55,6 +55,7 @@ import net.dries007.tfc.objects.blocks.stone.*;
 import net.dries007.tfc.objects.blocks.wood.BlockLeavesTFC;
 import net.dries007.tfc.objects.blocks.wood.BlockLogTFC;
 import net.dries007.tfc.objects.blocks.wood.BlockSaplingTFC;
+import net.dries007.tfc.objects.fluids.FluidsTFC;
 import net.dries007.tfc.objects.items.ItemAnimalHide;
 import net.dries007.tfc.objects.items.ItemGem;
 import net.dries007.tfc.objects.items.ItemGoldPan;
@@ -62,7 +63,6 @@ import net.dries007.tfc.objects.items.ItemsTFC;
 import net.dries007.tfc.objects.items.ceramics.ItemMold;
 import net.dries007.tfc.objects.items.metal.ItemOreTFC;
 import net.dries007.tfc.objects.te.*;
-import net.dries007.tfc.types.DefaultPlants;
 
 import static net.dries007.tfc.TerraFirmaCraft.MOD_ID;
 import static net.dries007.tfc.objects.blocks.BlockPlacedHide.SIZE;
@@ -262,26 +262,29 @@ public final class ClientRegisterEvents
         BlockColors blockColors = event.getBlockColors();
 
         // Grass Colors
-        IBlockColor grassColor = GrassColorHandler::computeGrassColor;
+        // IBlockColor grassColor = GrassColorHandler::computeGrassColor;
 
         // Foliage Color
         // todo: do something different for conifers - they should have a different color mapping through the seasons
-        IBlockColor foliageColor = GrassColorHandler::computeGrassColor;
+        // IBlockColor foliageColor = GrassColorHandler::computeGrassColor;
+        IBlockColor foliageColor = (state, worldIn, pos, tintIndex) -> worldIn != null && pos != null ? BiomeColorHelper.getFoliageColorAtPos(worldIn, pos) : -1;
 
-        blockColors.registerBlockColorHandler(grassColor, BlocksTFC.PEAT_GRASS);
-        blockColors.registerBlockColorHandler(grassColor, BlocksTFC.getAllBlockRockVariants().stream().filter(x -> x.getType().isGrass).toArray(BlockRockVariant[]::new));
+        blockColors.registerBlockColorHandler(BlockColoring.GRASS_COLORING, BlocksTFC.PEAT_GRASS);
+        blockColors.registerBlockColorHandler(BlockColoring.GRASS_COLORING, BlocksTFC.getAllBlockRockVariants().stream().filter(x -> x.getType().isGrass).toArray(BlockRockVariant[]::new));
         // This is talking about tall grass vs actual grass blocks
-        blockColors.registerBlockColorHandler(grassColor, BlocksTFC.getAllGrassBlocks().toArray(new BlockPlantTFC[0]));
+        blockColors.registerBlockColorHandler(BlockColoring.GRASS_COLORING, BlocksTFC.getAllGrassBlocks().toArray(new BlockPlantTFC[0]));
 
-        blockColors.registerBlockColorHandler(foliageColor, BlocksTFC.getAllLeafBlocks().toArray(new Block[0]));
-        blockColors.registerBlockColorHandler(foliageColor, BlocksTFC.getAllPlantBlocks().toArray(new BlockPlantTFC[0]));
+        blockColors.registerBlockColorHandler(BlockColoring.FOLIAGE_COLORING, BlocksTFC.getAllLeafBlocks().toArray(new Block[0]));
+        blockColors.registerBlockColorHandler(BlockColoring.FOLIAGE_COLORING, BlocksTFC.getAllPlantBlocks().toArray(new BlockPlantTFC[0]));
 
-        blockColors.registerBlockColorHandler(foliageColor, BlocksTFC.getAllFruitTreeLeavesBlocks().toArray(new Block[0]));
+        blockColors.registerBlockColorHandler(BlockColoring.FOLIAGE_COLORING, BlocksTFC.getAllFruitTreeLeavesBlocks().toArray(new Block[0]));
 
-        blockColors.registerBlockColorHandler(foliageColor, BlocksTFC.getAllFlowerPots().toArray(new Block[0]));
+        blockColors.registerBlockColorHandler(BlockColoring.FOLIAGE_COLORING, BlocksTFC.getAllFlowerPots().toArray(new Block[0]));
 
         blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> BlockFarmlandTFC.TINT[state.getValue(BlockFarmlandTFC.MOISTURE)],
             BlocksTFC.getAllBlockRockVariants().stream().filter(x -> x.getType() == Rock.Type.FARMLAND).toArray(BlockRockVariant[]::new));
+
+        blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> worldIn != null && pos != null ? BiomeColorHelper.getWaterColorAtPos(worldIn, pos) : -1, FluidsTFC.SALT_WATER.get().getBlock());
     }
 
     @SubscribeEvent

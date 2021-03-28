@@ -6,6 +6,7 @@
 package net.dries007.tfc.types;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -52,10 +53,10 @@ public final class DefaultRocks
     public static void onPreRegisterRockCategory(TFCRegistryEvent.RegisterPreBlock<RockCategory> event)
     {
         event.getRegistry().registerAll(
-            new RockCategory(IGNEOUS_INTRUSIVE, ToolMaterialsTFC.IGNEOUS_INTRUSIVE, true, true, true, -0.4f, 0f, 1.6F, 10F, true),
-            new RockCategory(IGNEOUS_EXTRUSIVE, ToolMaterialsTFC.IGNEOUS_EXTRUSIVE, true, true, true, -0.5f, 0f, 1.6F, 10F, true),
-            new RockCategory(SEDIMENTARY, ToolMaterialsTFC.SEDIMENTARY, true, false, false, 0.3f, 5f, 1.4F, 10F, false),
-            new RockCategory(METAMORPHIC, ToolMaterialsTFC.METAMORPHIC, true, true, false, 0.2f, 0f, 1.5F, 10F, false)
+            new RockCategory(IGNEOUS_INTRUSIVE, b -> b.getDefaultTemperature() >= 0.9F || BiomeDictionary.hasType(b, BiomeDictionary.Type.DEAD) || BiomeDictionary.hasType(b, BiomeDictionary.Type.MESA), ToolMaterialsTFC.IGNEOUS_INTRUSIVE, false, true, true, -0.4f, 0f, 1.6F, 10F, true),
+            new RockCategory(IGNEOUS_EXTRUSIVE, b -> b.getBaseHeight() > 0.6F || BiomeDictionary.hasType(b, BiomeDictionary.Type.DENSE) || BiomeDictionary.hasType(b, BiomeDictionary.Type.LUSH), ToolMaterialsTFC.IGNEOUS_EXTRUSIVE, true, true, true, -0.5f, 0f, 1.6F, 10F, true),
+            new RockCategory(SEDIMENTARY, b -> true, ToolMaterialsTFC.SEDIMENTARY, true, false, false, 0.3f, 5f, 1.4F, 10F, false),
+            new RockCategory(METAMORPHIC, b -> true, ToolMaterialsTFC.METAMORPHIC, true, true, true, 0.2f, 0f, 1.5F, 10F, false)
         );
     }
 

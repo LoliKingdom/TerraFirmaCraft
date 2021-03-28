@@ -48,6 +48,7 @@ import net.dries007.tfc.util.fuel.FuelManager;
 import net.dries007.tfc.util.json.JsonConfigRegistry;
 import net.dries007.tfc.world.classic.WorldTypeTFC;
 import net.dries007.tfc.world.classic.chunkdata.CapabilityChunkData;
+import net.dries007.tfc.world.classic.worldgen.experimental.WorldGeneratorHook;
 
 import static net.dries007.tfc.TerraFirmaCraft.MOD_ID;
 
@@ -165,6 +166,8 @@ public final class TerraFirmaCraft
         LootTablesTFC.init();
         CapabilityFood.init();
         TFCTriggers.init();
+
+        WorldGeneratorHook.getInstance();
 
         if (event.getSide().isClient())
         {

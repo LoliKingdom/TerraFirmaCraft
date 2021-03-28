@@ -4,7 +4,7 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.6",
   "compatibilityLevel": "JAVA_8",
-  "mixins": ["BlockDynamicLiquidMixin", "BlockIceMixin", "BlockSnowMixin", "BlockStaticLiquidMixin"],
+  "mixins": ["BlockDynamicLiquidMixin", "BlockIceMixin", "BlockSnowMixin", "BlockStaticLiquidMixin", "experimental.ChunkGeneratorOverworldBOPMixin", "experimental.WorldTypeBOPMixin"],
   "injectors": {
     "defaultRequire": 1
   }

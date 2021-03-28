@@ -58,10 +58,10 @@ public class WorldGenOreVeins implements IWorldGenerator
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
     {
-        if (!(chunkGenerator instanceof ChunkGenTFC)) return;
+        // if (!(chunkGenerator instanceof ChunkGenTFC)) return;
         final BlockPos chunkBlockPos = new BlockPos(chunkX << 4, 0, chunkZ << 4);
-        ChunkDataTFC chunkData = ChunkDataTFC.get(world, chunkBlockPos);
-        if (!chunkData.isInitialized()) return;
+        // ChunkDataTFC chunkData = ChunkDataTFC.get(world, chunkBlockPos);
+        // if (!chunkData.isInitialized()) return;
         if (world.provider.getDimension() != 0) return;
 
         List<Vein> veins = getNearbyVeins(chunkX, chunkZ, world.getSeed(), CHUNK_RADIUS);
@@ -100,7 +100,7 @@ public class WorldGenOreVeins implements IWorldGenerator
             {
                 if (generated)
                 {
-                    chunkData.markVeinGenerated(vein);
+                    // chunkData.markVeinGenerated(vein);
                 }
                 else if (ConfigTFC.General.DEBUG.enable)
                 {

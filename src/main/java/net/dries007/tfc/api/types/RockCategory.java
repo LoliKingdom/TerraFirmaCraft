@@ -5,11 +5,13 @@
 
 package net.dries007.tfc.api.types;
 
+import java.util.Collection;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import static net.dries007.tfc.TerraFirmaCraft.MOD_ID;
@@ -19,6 +21,8 @@ public class RockCategory extends IForgeRegistryEntry.Impl<RockCategory>
 {
     private final float caveGenMod;
     private final float caveFreqMod;
+
+    private final Predicate<Biome> biomePredicate;
 
     private final Item.ToolMaterial toolMaterial;
     private final boolean layer1;
@@ -39,9 +43,10 @@ public class RockCategory extends IForgeRegistryEntry.Impl<RockCategory>
      * @param resistance   How resistant to explosion this type is
      * @param hasAnvil     if this rock should be able to create a stone anvil
      */
-    public RockCategory(@Nonnull ResourceLocation name, @Nonnull Item.ToolMaterial toolMaterial, boolean layer1, boolean layer2, boolean layer3, float caveGenMod, float caveFreqMod, float hardness, float resistance, boolean hasAnvil)
+    public RockCategory(@Nonnull ResourceLocation name, Predicate<Biome> biomePredicate, @Nonnull Item.ToolMaterial toolMaterial, boolean layer1, boolean layer2, boolean layer3, float caveGenMod, float caveFreqMod, float hardness, float resistance, boolean hasAnvil)
     {
         setRegistryName(name);
+        this.biomePredicate = biomePredicate;
         this.toolMaterial = toolMaterial;
         this.caveGenMod = caveGenMod;
         this.caveFreqMod = caveFreqMod;
@@ -51,6 +56,26 @@ public class RockCategory extends IForgeRegistryEntry.Impl<RockCategory>
         this.hasAnvil = hasAnvil;
         this.hardness = hardness;
         this.resistance = resistance;
+    }
+
+    public boolean canGenerateAsLayer(int layer)
+    {
+        switch (layer)
+        {
+            case 1:
+                return layer1;
+            case 2:
+                return layer2;
+            case 3:
+                return layer3;
+            default:
+                return false;
+        }
+    }
+
+    public boolean canGenerateInBiomes(Collection<Biome> biomes)
+    {
+        return biomes.stream().filter(this.biomePredicate).count() >= (biomes.size() / 2);
     }
 
     @Nonnull

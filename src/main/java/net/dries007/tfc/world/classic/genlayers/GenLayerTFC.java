@@ -8,6 +8,7 @@ package net.dries007.tfc.world.classic.genlayers;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import javax.imageio.ImageIO;
@@ -105,6 +106,26 @@ public abstract class GenLayerTFC extends GenLayer
         drawImageBiomes(1024, zoomed, "zoomed");
 
         return new GenLayerTFC[] {riverMix, zoomed};
+    }
+
+    public static GenLayerTFC initializeBiomeSensitiveRock(long seed, Set<Biome> biomesInChunk, GenLayerBiomeSensitiveRockInit.BiomeSensitiveLayer level)
+    {
+        GenLayerTFC layer = new GenLayerBiomeSensitiveRockInit(1L, biomesInChunk, level);
+        layer = new GenLayerFuzzyZoomTFC(2000L, layer);
+        layer = new GenLayerZoomTFC(2001L, layer);
+        layer = new GenLayerZoomTFC(2002L, layer);
+        layer = new GenLayerZoomTFC(2003L, layer);
+        layer = new GenLayerSmoothTFC(1000L, layer);
+
+        for (int zoomLevel = 0; zoomLevel < 5; ++zoomLevel) // Hardcode 5
+        {
+            layer = new GenLayerZoomTFC(1000 + zoomLevel, layer);
+        }
+        layer = new GenLayerSmoothTFC(1000L, layer);
+        layer = new GenLayerVoronoiZoomTFC(10L, layer);
+        layer.initWorldGenSeed(seed);
+        // drawImage(1024, layer, "rock" + level.name());
+        return layer;
     }
 
     public static GenLayerTFC initializeRock(long seed, RockCategory.Layer level, int rockLayerSize)

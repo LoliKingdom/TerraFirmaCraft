@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import net.dries007.tfc.TerraFirmaCraft;
@@ -30,11 +31,9 @@ public final class CapabilityChunkData
         CapabilityManager.INSTANCE.register(ChunkDataTFC.class, new ChunkDataTFC.ChunkDataStorage(), ChunkDataTFC::new);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onAttachCapabilitiesChunk(AttachCapabilitiesEvent<Chunk> event)
     {
-        // Per #922, if there's no world or no world type, something is seriously violating our assumptions and we will just fail.
-        //noinspection ConstantConditions
         if (event.getObject().getWorld() != null && event.getObject().getWorld().getWorldType() == TerraFirmaCraft.getWorldType())
         {
             event.addCapability(CHUNK_DATA, new ChunkDataProvider());
