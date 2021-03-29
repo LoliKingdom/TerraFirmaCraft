@@ -252,7 +252,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
 
         new WorldGenLargeRocks().generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
 
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(this, world, rand, chunkX, chunkZ, hasVillageGenerated));
+        ForgeEventFactory.onChunkPopulate(false, this, world, rand, chunkX, chunkZ, hasVillageGenerated);
 
         BlockFalling.fallInstantly = false;
         ForgeModContainer.logCascadingWorldGeneration = prevLogging;
