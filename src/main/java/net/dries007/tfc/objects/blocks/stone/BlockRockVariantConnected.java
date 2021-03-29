@@ -9,6 +9,7 @@ import java.util.Random;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -41,9 +42,13 @@ public class BlockRockVariantConnected extends BlockRockVariantFallable
     public static void spreadGrass(World world, BlockPos pos, IBlockState us, Random rand) {
         BlockPos upPos = pos.up();
         IBlockState up = world.getBlockState(upPos);
+        if (up.getMaterial() == Material.WATER)
+        {
+            return;
+        }
         int neighborLight;
         Block usBlock;
-        if (up.getMaterial().isLiquid() || ((neighborLight = world.getLightFromNeighbors(upPos)) < 4 && up.getLightOpacity(world, upPos) > 2))
+        if ((neighborLight = world.getLightFromNeighbors(upPos)) < 4 && up.getLightOpacity(world, upPos) > 2)
         {
             usBlock = us.getBlock();
             if (usBlock instanceof BlockPeat)
