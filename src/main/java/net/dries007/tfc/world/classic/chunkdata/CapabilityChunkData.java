@@ -34,7 +34,7 @@ public final class CapabilityChunkData
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onAttachCapabilitiesChunk(AttachCapabilitiesEvent<Chunk> event)
     {
-        if (event.getObject().getWorld() != null && event.getObject().getWorld().getWorldType() == TerraFirmaCraft.getWorldType())
+        if (event.getObject().getWorld() != null)
         {
             event.addCapability(CHUNK_DATA, new ChunkDataProvider());
         }

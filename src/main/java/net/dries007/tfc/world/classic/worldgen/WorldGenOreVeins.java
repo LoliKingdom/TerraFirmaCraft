@@ -23,6 +23,7 @@ import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.objects.blocks.stone.BlockRockVariant;
 import net.dries007.tfc.world.classic.ChunkGenTFC;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataTFC;
+import net.dries007.tfc.world.classic.worldgen.experimental.NewExperimentalGenerator;
 import net.dries007.tfc.world.classic.worldgen.vein.Vein;
 import net.dries007.tfc.world.classic.worldgen.vein.VeinRegistry;
 
@@ -58,14 +59,17 @@ public class WorldGenOreVeins implements IWorldGenerator
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
     {
-        // if (!(chunkGenerator instanceof ChunkGenTFC)) return;
+        if (!(chunkGenerator instanceof NewExperimentalGenerator))
+        {
+            return;
+        }
         final BlockPos chunkBlockPos = new BlockPos(chunkX << 4, 0, chunkZ << 4);
-        // ChunkDataTFC chunkData = ChunkDataTFC.get(world, chunkBlockPos);
-        // if (!chunkData.isInitialized()) return;
-        if (world.provider.getDimension() != 0) return;
-
+        ChunkDataTFC chunkData = ChunkDataTFC.get(world, chunkBlockPos);
+        if (!chunkData.isInitialized())
+        {
+            return;
+        }
         List<Vein> veins = getNearbyVeins(chunkX, chunkZ, world.getSeed(), CHUNK_RADIUS);
-
         for (Vein vein : veins)
         {
             boolean generated = false;
@@ -80,9 +84,8 @@ public class WorldGenOreVeins implements IWorldGenerator
                         {
                             final BlockPos posAt = new BlockPos(x, y, z);
                             final IBlockState stateAt = world.getBlockState(posAt);
-
                             // Do checks specific to the individual block pos that is getting replaced
-                            if (random.nextDouble() < vein.getChanceToGenerate(posAt) && stateAt.getBlock() instanceof BlockRockVariant)
+                            if (random.nextDouble() <= vein.getChanceToGenerate(posAt) && stateAt.getBlock() instanceof BlockRockVariant)
                             {
                                 final BlockRockVariant blockAt = (BlockRockVariant) stateAt.getBlock();
                                 if (blockAt.getType() == Rock.Type.RAW && vein.canSpawnIn(blockAt.getRock()))
@@ -100,7 +103,7 @@ public class WorldGenOreVeins implements IWorldGenerator
             {
                 if (generated)
                 {
-                    // chunkData.markVeinGenerated(vein);
+                    chunkData.markVeinGenerated(vein);
                 }
                 else if (ConfigTFC.General.DEBUG.enable)
                 {
