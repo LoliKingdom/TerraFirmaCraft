@@ -21,6 +21,7 @@ import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraft.world.gen.structure.*;
 
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -187,9 +188,6 @@ public class NewExperimentalGenerator implements IChunkGenerator
 
         ForgeEventFactory.onChunkPopulate(true, this, world, rand, chunkX, chunkZ, hasVillageGenerated);
 
-        // ORE_VEINS_GEN.generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
-        // LARGE_ROCKS_GEN.generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
-
         new WorldGenOreVeins().generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
 
         mineshaftGenerator.generateStructure(world, rand, chunkPos);
@@ -250,7 +248,10 @@ public class NewExperimentalGenerator implements IChunkGenerator
             }
         }
 
-        new WorldGenLargeRocks().generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
+        if (rand.nextFloat() > 0.9)
+        {
+            new WorldGenLargeRocks().generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
+        }
 
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, chunkX, chunkZ, hasVillageGenerated);
 

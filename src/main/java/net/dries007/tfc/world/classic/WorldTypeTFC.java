@@ -21,16 +21,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import mcp.MethodsReturnNonnullByDefault;
 import net.dries007.tfc.client.gui.GuiCustomizeWorld;
 
-/**
- * todo: spawn stuff, see worldevent.createspawn & worldProvider
- */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class WorldTypeTFC extends WorldType
 {
-    public static final int SEALEVEL = 144;
-    public static final int ROCKLAYER2 = 110;
-    public static final int ROCKLAYER3 = 55;
+    @Deprecated public static final int SEALEVEL = 144;
+    @Deprecated public static final int ROCKLAYER2 = 110;
+    @Deprecated public static final int ROCKLAYER3 = 55;
 
     public WorldTypeTFC()
     {

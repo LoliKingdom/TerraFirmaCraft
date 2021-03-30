@@ -54,11 +54,11 @@ public class WorldGenFissure implements IWorldGenerator
 
         start = world.getTopSolidOrLiquidBlock(start).down(3);
 
-        final boolean stable = ChunkDataTFC.isStable(world, start);
-        if (checkStability && stable)
-        {
-            return;
-        }
+        // final boolean stable = ChunkDataTFC.isStable(world, start);
+        // if (checkStability && stable)
+        //  {
+            // return;
+        // }
 
         final IBlockState rock = BlockRockVariant.get(getRock3(world, start), Rock.Type.RAW).getDefaultState();
 

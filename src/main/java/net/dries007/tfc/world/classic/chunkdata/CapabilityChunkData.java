@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import biomesoplenty.common.world.WorldTypeBOP;
 import net.dries007.tfc.TerraFirmaCraft;
 import net.dries007.tfc.network.PacketChunkData;
 import net.dries007.tfc.util.climate.ClimateTFC;
@@ -34,7 +35,7 @@ public final class CapabilityChunkData
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onAttachCapabilitiesChunk(AttachCapabilitiesEvent<Chunk> event)
     {
-        if (event.getObject().getWorld() != null)
+        if (event.getObject().getWorld() != null && event.getObject().getWorld().getWorldType() instanceof WorldTypeBOP) // TODO: schedule to change
         {
             event.addCapability(CHUNK_DATA, new ChunkDataProvider());
         }

@@ -92,21 +92,6 @@ public final class ChunkDataTFC
         return get(world, pos).getFloraDiversity();
     }
 
-    public static boolean isStable(World world, BlockPos pos)
-    {
-        return get(world, pos).getStabilityLayer(pos.getX() & 15, pos.getZ() & 15).valueInt == 0;
-    }
-
-    public static int getDrainage(World world, BlockPos pos)
-    {
-        return get(world, pos).getDrainageLayer(pos.getX() & 15, pos.getZ() & 15).valueInt;
-    }
-
-    public static int getSeaLevelOffset(World world, BlockPos pos)
-    {
-        return get(world, pos).getSeaLevelOffset(pos.getX() & 15, pos.getZ() & 15);
-    }
-
     public static int getFishPopulation(World world, BlockPos pos)
     {
         return get(world, pos).getFishPopulation();
@@ -142,9 +127,12 @@ public final class ChunkDataTFC
     public void setGenerationData(int[] rockLayer1, int[] rockLayer2, int[] rockLayer3, float rainfall, float regionalTemp, float avgTemp, float floraDensity, float floraDiversity)
     {
         this.initialized = true;
-        System.arraycopy(rockLayer1, 0, this.rockLayer1, 0, 256);
-        System.arraycopy(rockLayer2, 0, this.rockLayer2, 0, 256);
-        System.arraycopy(rockLayer3, 0, this.rockLayer3, 0, 256);
+        for (int i = 0; i < 256; i++)
+        {
+            this.rockLayer1[i] = rockLayer1[i];
+            this.rockLayer2[i] = rockLayer2[i];
+            this.rockLayer3[i] = rockLayer3[i];
+        }
         this.rainfall = rainfall;
         this.regionalTemp = regionalTemp;
         this.avgTemp = avgTemp;
@@ -167,9 +155,12 @@ public final class ChunkDataTFC
 
         this.seaLevelOffset = new int[256];
 
-        System.arraycopy(rockLayer1, 0, this.rockLayer1, 0, 256);
-        System.arraycopy(rockLayer2, 0, this.rockLayer2, 0, 256);
-        System.arraycopy(rockLayer3, 0, this.rockLayer3, 0, 256);
+        for (int i = 0; i < 256; i++)
+        {
+            this.rockLayer1[i] = rockLayer1[i];
+            this.rockLayer2[i] = rockLayer2[i];
+            this.rockLayer3[i] = rockLayer3[i];
+        }
         System.arraycopy(stabilityLayer, 0, this.stabilityLayer, 0, 256);
         System.arraycopy(drainageLayer, 0, this.drainageLayer, 0, 256);
         System.arraycopy(seaLevelOffset, 0, this.seaLevelOffset, 0, 256);
