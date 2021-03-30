@@ -26,6 +26,7 @@ import net.dries007.tfc.world.classic.chunkdata.ChunkDataTFC;
 import net.dries007.tfc.world.classic.worldgen.experimental.NewExperimentalGenerator;
 import net.dries007.tfc.world.classic.worldgen.vein.Vein;
 import net.dries007.tfc.world.classic.worldgen.vein.VeinRegistry;
+import net.dries007.tfc.world.classic.worldgen.vein.VeinType;
 
 public class WorldGenOreVeins implements IWorldGenerator
 {
@@ -50,10 +51,13 @@ public class WorldGenOreVeins implements IWorldGenerator
     private static void getVeinsAtChunk(List<Vein> listToAdd, int chunkX, int chunkZ, long worldSeed)
     {
         LOCAL_RANDOM.setSeed(worldSeed + chunkX * 341873128712L + chunkZ * 132897987541L);
-        listToAdd.addAll(VeinRegistry.INSTANCE.getVeins().values().stream()
-            .filter(veinType -> LOCAL_RANDOM.nextInt(veinType.getRarity()) == 0)
-            .map(veinType -> veinType.createVein(LOCAL_RANDOM, chunkX, chunkZ))
-            .collect(Collectors.toList()));
+        for (VeinType type : VeinRegistry.INSTANCE.getVeins().values())
+        {
+            if (LOCAL_RANDOM.nextInt(type.getRarity()) == 0)
+            {
+                listToAdd.add(type.createVein(LOCAL_RANDOM, chunkX, chunkZ));
+            }
+        }
     }
 
     @Override

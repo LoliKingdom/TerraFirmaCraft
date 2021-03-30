@@ -21,9 +21,7 @@ import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraft.world.gen.structure.*;
 
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
@@ -37,7 +35,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.dries007.tfc.api.registries.TFCRegistries;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.api.types.RockCategory;
-import net.dries007.tfc.world.classic.chunkdata.CapabilityChunkData;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataProvider;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataTFC;
 import net.dries007.tfc.world.classic.genlayers.GenLayerTFC;
@@ -142,6 +139,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
         prepareChunk(chunkX, chunkZ, chunkprimer);
         Biome[] biomes = world.getBiomeProvider().getBiomes(null, chunkX * 16, chunkZ * 16, 16, 16);
         generateTerrain(chunkX, chunkZ, chunkprimer, biomes);
+
         // No stronghold generation, that would be a custom structure.
         caveGenerator.generate(world, chunkX, chunkZ, chunkprimer);
         ravineGenerator.generate(world, chunkX, chunkZ, chunkprimer);
