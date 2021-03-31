@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class WorldTypeBOPMixin
 {
 
-    @Inject(method = "getChunkGenerator", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getChunkGenerator", at = @At("HEAD"), cancellable = true, remap = false)
     private void getExperimentalGenerator(World world, String generatorOptions, CallbackInfoReturnable<IChunkGenerator> cir)
     {
         cir.setReturnValue(new NewExperimentalGenerator(world, generatorOptions));

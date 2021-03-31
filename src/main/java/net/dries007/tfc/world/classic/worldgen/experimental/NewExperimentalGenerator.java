@@ -46,6 +46,8 @@ import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.Ev
 
 public class NewExperimentalGenerator implements IChunkGenerator
 {
+    public static Map<ChunkPos, int[]> rockLayerCache = new Object2ObjectOpenHashMap<>(); // For RiverGenerator
+
     private static final int yOffset = 114;
     private static final int seaLevel = 32;
 
@@ -252,6 +254,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
         }
 
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, chunkX, chunkZ, hasVillageGenerated);
+        rockLayerCache.remove(chunkPos);
 
         BlockFalling.fallInstantly = false;
         ForgeModContainer.logCascadingWorldGeneration = prevLogging;
@@ -345,6 +348,9 @@ public class NewExperimentalGenerator implements IChunkGenerator
 
     private void generateTerrain(int chunkX, int chunkZ, TrackedChunkPrimer primer, Biome[] biomes)
     {
+        rockLayer1 = GenLayerTFC.initializeRock(world.getSeed() + 1, RockCategory.Layer.TOP, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
+        ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
+        rockLayerCache.put(chunkPos, rockLayer1);
         if (!ForgeEventFactory.onReplaceBiomeBlocks(this, chunkX, chunkZ, primer, world))
         {
             return;
@@ -359,7 +365,6 @@ public class NewExperimentalGenerator implements IChunkGenerator
                 biome.genTerrainBlocks(world, rand, primer, chunkX * 16 + localX, chunkZ * 16 + localZ, stoneNoiseArray[localZ + localX * 16]);
             }
         }
-        rockLayer1 = GenLayerTFC.initializeRock(world.getSeed() + 1, RockCategory.Layer.TOP, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
         rockLayer2 = GenLayerTFC.initializeRock(world.getSeed() + 2, RockCategory.Layer.MIDDLE, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
         rockLayer3 = GenLayerTFC.initializeRock(world.getSeed() + 3, RockCategory.Layer.BOTTOM, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
         for (int localX = 0; localX < 16; ++localX)

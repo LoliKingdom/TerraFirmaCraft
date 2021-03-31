@@ -47,6 +47,6 @@ public class TFCCorePlugin implements IFMLLoadingPlugin
     @Override
     public String getAccessTransformerClass()
     {
-        return null;
+        return "net.dries007.tfc.core.FuckScala";
     }
 }
