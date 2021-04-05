@@ -11,7 +11,6 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,13 +21,10 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 import net.dries007.tfc.ConfigTFC;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.objects.blocks.BlocksTFC;
-import net.dries007.tfc.objects.blocks.stone.BlockSurfaceRock;
-import net.dries007.tfc.objects.items.rock.ItemRock;
-import net.dries007.tfc.objects.te.TEPlacedItemFlat;
-import net.dries007.tfc.util.Helpers;
 import net.dries007.tfc.world.classic.ChunkGenTFC;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataTFC;
 import net.dries007.tfc.world.classic.worldgen.vein.Vein;
+import zone.rong.zairyou.api.block.SurfaceRockBlock;
 import zone.rong.zairyou.api.material.Material;
 import zone.rong.zairyou.api.material.type.BlockMaterialType;
 
@@ -126,7 +122,7 @@ public class WorldGenLooseRocks implements IWorldGenerator
                         world.setBlockState(pos, ore.getBlock(BlockMaterialType.ORE_SURFACE_ROCK), 2);
                     }
                 } else {
-                    world.setBlockState(pos, BlockSurfaceRock.get(rock), 2);
+                    world.setBlockState(pos, SurfaceRockBlock.get(rock), 2);
                 }
             }
         }

@@ -16,7 +16,7 @@ public class TFCCorePlugin implements IFMLLoadingPlugin
     public TFCCorePlugin()
     {
         MixinBootstrap.init();
-        Mixins.addConfiguration("mixins.tfc.json");
+        Mixins.addConfiguration("mixins.vanilla.json");
     }
 
     @Override

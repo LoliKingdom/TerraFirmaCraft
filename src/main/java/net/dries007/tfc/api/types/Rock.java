@@ -5,6 +5,7 @@
 
 package net.dries007.tfc.api.types;
 
+import java.util.Locale;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -208,6 +209,13 @@ public class Rock extends IForgeRegistryEntry.Impl<Rock> implements Comparable<R
         public Specification getFallingSpecification()
         {
             return fallingSpecification;
+        }
+
+
+        @Override
+        public String toString()
+        {
+            return this.name().toLowerCase(Locale.ROOT);
         }
     }
 

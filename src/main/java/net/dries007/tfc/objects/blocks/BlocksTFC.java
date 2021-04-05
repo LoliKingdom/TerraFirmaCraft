@@ -733,10 +733,6 @@ public final class BlocksTFC
         allNormalItemBlocks = normalItemBlocks.build();
         allInventoryItemBlocks = inventoryItemBlocks.build();
 
-        // Register custom added blocks
-
-        BlockSurfaceRock.getInstances().forEach(event.getRegistry()::register);
-
         // Register Tile Entities
         // Putting tile entity registration in the respective block can call it multiple times. Just put here to avoid duplicates
 
