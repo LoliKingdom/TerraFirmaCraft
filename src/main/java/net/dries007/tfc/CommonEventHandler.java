@@ -5,8 +5,6 @@
 
 package net.dries007.tfc;
 
-import java.util.Arrays;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockSnow;
@@ -108,7 +106,6 @@ import net.dries007.tfc.objects.blocks.stone.BlockStoneAnvil;
 import net.dries007.tfc.objects.blocks.wood.BlockLogTFC;
 import net.dries007.tfc.objects.blocks.wood.BlockSupport;
 import net.dries007.tfc.objects.container.CapabilityContainerListener;
-import net.dries007.tfc.objects.entity.animal.EntityAnimalTFC;
 import net.dries007.tfc.objects.fluids.FluidsTFC;
 import net.dries007.tfc.objects.items.ItemQuiver;
 import net.dries007.tfc.objects.items.ItemsTFC;
@@ -265,8 +262,8 @@ public final class CommonEventHandler
         }
 
         // Drop shards from glass
-        ItemStack stackAt = new ItemStack(Item.getItemFromBlock(state.getBlock()), 1, state.getBlock().damageDropped(state));
-        if (OreDictionaryHelper.doesStackMatchOre(stackAt,"blockGlass"))
+        ItemStack stackAt = new ItemStack(state.getBlock(), 1, state.getBlock().damageDropped(state));
+        if (OreDictionaryHelper.doesStackMatchOre(stackAt, "blockGlass"))
         {
             event.getDrops().add(new ItemStack(ItemsTFC.GLASS_SHARD));
         }
@@ -726,18 +723,6 @@ public final class CommonEventHandler
                 }
             }
 
-            if (ConfigTFC.General.SPAWN_PROTECTION.preventPredators && event.getEntity() instanceof IPredator)
-            {
-                // Prevent Predators
-                ChunkDataTFC data = ChunkDataTFC.get(event.getWorld(), pos);
-                int minY = ConfigTFC.General.SPAWN_PROTECTION.minYPredators;
-                int maxY = ConfigTFC.General.SPAWN_PROTECTION.maxYPredators;
-                if (data.isSpawnProtected() && minY <= maxY && event.getY() >= minY && event.getY() <= maxY)
-                {
-                    event.setResult(Event.Result.DENY);
-                }
-            }
-
             if (event.getEntity() instanceof EntitySquid && world.getBlockState(pos).getBlock() instanceof BlockFluidTFC)
             {
                 // Prevents squids spawning outside of salt water (eg: oceans)
@@ -827,18 +812,6 @@ public final class CommonEventHandler
                 entity.setDropItemsWhenDead(false);
                 entity.setDead();
                 event.setCanceled(true); // NO!
-            }
-
-            // Prevent vanilla animals (that have a TFC counterpart) from mob spawners / egg throws / other mod mechanics
-            if (ConfigTFC.General.OVERRIDES.forceReplaceVanillaAnimals && Helpers.isVanillaAnimal(entity))
-            {
-                Entity TFCReplacement = Helpers.getTFCReplacement(entity);
-                if (TFCReplacement != null)
-                {
-                    TFCReplacement.setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-                    event.getWorld().spawnEntity(TFCReplacement); // Fires another spawning event for the TFC replacement
-                }
-                event.setCanceled(true); // Cancel the vanilla spawn
             }
             if (ConfigTFC.General.DIFFICULTY.giveVanillaMobsEquipment)
             {
@@ -1022,18 +995,6 @@ public final class CommonEventHandler
         }
     }
 
-    /**
-     * This will disable the bonus chest, cheaty cheaty players >:(
-     *
-     * @param event {@link net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition}
-     */
-    @SubscribeEvent
-    public static void onCreateSpawn(WorldEvent.CreateSpawnPosition event)
-    {
-        event.getSettings().bonusChestEnabled = false;
-        TerraFirmaCraft.getLog().info("Disabling bonus chest, you cheaty cheater!");
-    }
-
     @SubscribeEvent
     public static void onFluidPlaceBlock(BlockEvent.FluidPlaceBlockEvent event)
     {
@@ -1146,11 +1107,6 @@ public final class CommonEventHandler
                 {
                     target.dropItem(Items.FEATHER, 1);
                     target.attackEntityFrom(DamageSourcesTFC.PLUCKING, (float) ConfigTFC.General.MISC.damagePerFeather);
-                    if (target instanceof IAnimalTFC)
-                    {
-                        IAnimalTFC animalTarget = (IAnimalTFC) target;
-                        animalTarget.setFamiliarity(animalTarget.getFamiliarity() - 0.04f);
-                    }
                     return;
                 }
             }

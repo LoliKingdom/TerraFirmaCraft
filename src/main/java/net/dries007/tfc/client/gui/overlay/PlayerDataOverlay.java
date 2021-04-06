@@ -13,7 +13,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,7 +23,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,7 +31,6 @@ import net.dries007.tfc.ConfigTFC;
 import net.dries007.tfc.api.capability.food.IFoodStatsTFC;
 import net.dries007.tfc.api.capability.player.CapabilityPlayerData;
 import net.dries007.tfc.api.capability.player.IPlayerData;
-import net.dries007.tfc.api.types.IAnimalTFC;
 import net.dries007.tfc.objects.items.metal.ItemMetalChisel;
 import net.dries007.tfc.util.config.HealthDisplayFormat;
 
@@ -254,79 +251,6 @@ public final class PlayerDataOverlay
             mc.renderEngine.bindTexture(ICONS);
             drawTexturedModalRect(itemModeX, itemModeY, iconU, 58, 20, 20);
             mc.renderEngine.bindTexture(MC_ICONS);
-        }
-    }
-
-    @SubscribeEvent
-    public void renderAnimalFamiliarity(RenderLivingEvent.Post<EntityLiving> event)
-    {
-        Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = mc.player.inventory.player;
-
-        if (player.isSneaking())
-        {
-            EntityLivingBase entity = event.getEntity();
-            if (entity instanceof IAnimalTFC && ((IAnimalTFC) entity).getAdultFamiliarityCap() > 0 && entity == mc.pointedEntity)
-            {
-                double x, y, z;
-                x = event.getX();
-                y = event.getY();
-                z = event.getZ();
-
-                float f = 1.6F;
-                float f1 = 0.016666668F * f;
-                double d3 = entity.getDistance(player);
-                float f2 = 5.0F;
-
-                if (d3 < f2)
-                {
-                    IAnimalTFC animal = (IAnimalTFC) entity;
-                    RenderManager rendermanager = mc.getRenderManager();
-
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef((float) x + 0.0F, (float) y + entity.height + 0.75F, (float) z);
-                    GL11.glRotatef(-rendermanager.playerViewY, 0.0F, 1.0F, 0.0F);
-                    GL11.glRotatef(rendermanager.playerViewX, 1.0F, 0.0F, 0.0F);
-                    GL11.glScalef(-f1, -f1, f1);
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    GL11.glTranslatef(0.0F, 0.25F / f1, 0.0F);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.renderEngine.bindTexture(ICONS);
-                    GL11.glScalef(0.33F, 0.33F, 0.33F);
-
-                    float familiarity = Math.max(0.0F, Math.min(1.0F, animal.getFamiliarity()));
-                    if (familiarity >= animal.getAdultFamiliarityCap() && animal.getAge() != IAnimalTFC.Age.CHILD)
-                    {
-                        // Render a red-ish outline for adults that cannot be familiarized more
-                        drawTexturedModalRect(-8, 0, 132, 40, 16, 16);
-                    }
-                    else if (familiarity >= 0.3F)
-                    {
-                        // Render a white outline for the when the familiarity stopped decaying
-                        drawTexturedModalRect(-8, 0, 112, 40, 16, 16);
-                    }
-                    else
-                    {
-                        drawTexturedModalRect(-8, 0, 92, 40, 16, 16);
-                    }
-
-                    GL11.glTranslatef(0, 0, -0.001F);
-
-                    if (familiarity == 1.0F)
-                    {
-                        drawTexturedModalRect(-6, 14 - (int) (12 * familiarity), 114, 74 - (int) (12 * familiarity), 12, (int) (12 * familiarity));
-                    }
-                    else
-                    {
-                        drawTexturedModalRect(-6, 14 - (int) (12 * familiarity), 94, 74 - (int) (12 * familiarity), 12, (int) (12 * familiarity));
-                    }
-
-                    GL11.glDepthMask(true);
-                    GL11.glEnable(GL11.GL_LIGHTING);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    GL11.glPopMatrix();
-                }
-            }
         }
     }
 }

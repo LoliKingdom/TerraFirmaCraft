@@ -12,7 +12,6 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.util.ResourceLocation;
 
 import net.dries007.tfc.api.capability.damage.DamageResistance;
-import net.dries007.tfc.objects.entity.animal.AnimalFood;
 import net.dries007.tfc.util.json.*;
 import net.dries007.tfc.world.classic.worldgen.vein.VeinType;
 
@@ -23,7 +22,6 @@ public final class Constants
         .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
         .registerTypeAdapter(VeinType.class, new VeinTypeJson())
         .registerTypeAdapter(DamageResistance.class, new DamageResistanceJson())
-        .registerTypeAdapter(AnimalFood.class, new AnimalFoodJson())
         .create();
     public static final String GUI_FACTORY = "net.dries007.tfc.client.TFCModGuiFactory";
 

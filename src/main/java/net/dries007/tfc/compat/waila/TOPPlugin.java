@@ -36,10 +36,6 @@ public class TOPPlugin implements Function<ITheOneProbe, Void>
         new TOPBlockInterface(new QuernProvider())
     );
 
-    public static final List<TOPEntityInterface> TOP_ENTITY_INTERFACES = Collections.singletonList(
-        new TOPEntityInterface(new AnimalProvider())
-    );
-
     @Override
     public Void apply(ITheOneProbe probe)
     {
@@ -49,14 +45,6 @@ public class TOPPlugin implements Function<ITheOneProbe, Void>
             if (blockInterface.overridesHeadInfo())
             {
                 probe.registerBlockDisplayOverride(blockInterface);
-            }
-        }
-        for (TOPEntityInterface entityInterface : TOP_ENTITY_INTERFACES)
-        {
-            probe.registerEntityProvider(entityInterface);
-            if (entityInterface.overridesHeadInfo())
-            {
-                probe.registerEntityDisplayOverride(entityInterface);
             }
         }
         return null;

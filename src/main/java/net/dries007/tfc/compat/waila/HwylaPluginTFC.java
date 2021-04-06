@@ -19,7 +19,6 @@ import net.dries007.tfc.compat.waila.providers.*;
 public class HwylaPluginTFC implements IWailaPlugin
 {
     public static final List<IWailaPlugin> WAILA_PLUGINS = Arrays.asList(
-        new HwylaEntityInterface(new AnimalProvider()),
         new HwylaBlockInterface(new BarrelProvider()),
         new HwylaBlockInterface(new BerryBushProvider()),
         new HwylaBlockInterface(new BlastFurnaceProvider()),

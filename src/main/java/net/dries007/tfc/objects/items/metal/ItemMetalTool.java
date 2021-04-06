@@ -122,6 +122,7 @@ public class ItemMetalTool extends ItemMetal
                 break;
             case PROPICK:
                 // Non-Weapon (should be even worse than non-weapons)
+                setHarvestLevel("prospecting_pickaxe", harvestLevel);
                 typeDamage = 0.5f;
                 areaOfEffect = 1;
                 attackSpeed = -2.8f;
@@ -170,6 +171,7 @@ public class ItemMetalTool extends ItemMetal
                 break;
             case SWORD:
                 // Weapon, but it has it's own class now
+                setHarvestLevel("sword", harvestLevel);
                 typeDamage = 1f;
                 areaOfEffect = 1;
                 attackSpeed = -2.4f;
@@ -178,6 +180,7 @@ public class ItemMetalTool extends ItemMetal
                 break;
             case MACE:
                 // Weapon
+                setHarvestLevel("mace", harvestLevel);
                 typeDamage = 1.3f;
                 areaOfEffect = 1;
                 attackSpeed = -2.8f;
@@ -186,6 +189,7 @@ public class ItemMetalTool extends ItemMetal
                 break;
             case JAVELIN:
                 // Weapon
+                setHarvestLevel("javelin", harvestLevel);
                 typeDamage = 0.7f;
                 areaOfEffect = 1;
                 attackSpeed = -1.8f;
@@ -194,6 +198,7 @@ public class ItemMetalTool extends ItemMetal
                 break;
             case SHIELD:
                 // Non Weapon (or, is the best attack, defense?)
+                setHarvestLevel("shield", harvestLevel);
                 typeDamage = 0.1f;
                 areaOfEffect = 1;
                 attackSpeed = -3;

@@ -142,6 +142,9 @@ repositories {
         name = "mixins"
         url "https://repo.spongepowered.org/maven"
     }
+    maven {
+        url "https://maven.blamejared.com/"
+    }
 }
 
 String mcVersion = config.minecraft.version
@@ -174,6 +177,14 @@ dependencies {
         exclude module: "gson"
         exclude module: "commons-io"
     }
+
+    deobfCompile "curse.maven:craftstudio-api:2661859"
+
+    deobfCompile "com.animania:animania-1.12.2-base:2.0.3.29"
+    deobfCompile "com.animania:animania-1.12.2-catsdogs:1.0.0.29"
+    deobfCompile "com.animania:animania-1.12.2-extra:1.0.2.29"
+    deobfCompile "com.animania:animania-1.12.2-farm:1.0.2.29"
+
 }
 
 processResources {

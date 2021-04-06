@@ -5,6 +5,7 @@
 
 package net.dries007.tfc.api.types;
 
+import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -144,7 +145,7 @@ public class Ore extends IForgeRegistryEntry.Impl<Ore>
         @Override
         public String getName()
         {
-            return this.name().toLowerCase();
+            return this.name().toLowerCase(Locale.US);
         }
 
         public int getMeta()
