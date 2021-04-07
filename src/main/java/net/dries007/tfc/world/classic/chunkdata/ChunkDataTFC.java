@@ -25,7 +25,6 @@ import net.dries007.tfc.TerraFirmaCraft;
 import net.dries007.tfc.api.registries.TFCRegistries;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.api.types.Tree;
-import net.dries007.tfc.util.NBTBuilder;
 import net.dries007.tfc.util.calendar.CalendarTFC;
 import net.dries007.tfc.util.calendar.ICalendar;
 import net.dries007.tfc.world.classic.DataLayer;
@@ -52,7 +51,8 @@ public final class ChunkDataTFC
     @Nonnull
     public static ChunkDataTFC get(World world, BlockPos pos)
     {
-        return get(world.getChunk(pos));
+        ChunkDataTFC data = world.getChunk(pos).getCapability(ChunkDataProvider.CHUNK_DATA_CAPABILITY, null);
+        return data == null ? EMPTY : data;
     }
 
     @Nonnull
@@ -92,11 +92,6 @@ public final class ChunkDataTFC
         return get(world, pos).getFloraDiversity();
     }
 
-    public static int getFishPopulation(World world, BlockPos pos)
-    {
-        return get(world, pos).getFishPopulation();
-    }
-
     public static Rock getRockHeight(World world, BlockPos pos)
     {
         return get(world, pos).getRockLayerHeight(pos.getX() & 15, pos.getY(), pos.getZ() & 15);
@@ -109,7 +104,6 @@ public final class ChunkDataTFC
     private final DataLayer[] stabilityLayer = new DataLayer[256]; // To be removed / replaced?
     private int[] seaLevelOffset;
     private boolean initialized = false;
-    private final int fishPopulation = FISH_POP_MAX; // todo: Set this based on biome? temp? rng?
     private float rainfall;
     private float regionalTemp;
     private float avgTemp;
@@ -291,11 +285,6 @@ public final class ChunkDataTFC
         return seaLevelOffset[z << 4 | x];
     }
 
-    public int getFishPopulation()
-    {
-        return fishPopulation;
-    }
-
     public float getRainfall()
     {
         return rainfall;
@@ -431,11 +420,12 @@ public final class ChunkDataTFC
         @Override
         public NBTBase writeNBT(Capability<ChunkDataTFC> capability, ChunkDataTFC instance, EnumFacing side)
         {
+            NBTTagCompound root = new NBTTagCompound();
             if (instance == null || !instance.isInitialized())
             {
-                return new NBTBuilder().setBoolean("valid", false).build();
+                root.setBoolean("valid", false);
+                return root;
             }
-            NBTTagCompound root = new NBTTagCompound();
             root.setBoolean("valid", true);
 
             root.setTag("rockLayer1", new NBTTagIntArray(instance.rockLayer1));

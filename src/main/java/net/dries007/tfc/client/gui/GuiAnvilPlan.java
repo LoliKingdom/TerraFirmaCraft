@@ -14,6 +14,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -91,7 +92,9 @@ public class GuiAnvilPlan extends GuiContainerTE<TEAnvilTFC>
         {
             // This fires when you select a plan in the Plan GUI
             ResourceLocation recipeName = ((GuiButtonAnvilPlanIcon) button).getRecipeName();
-            TerraFirmaCraft.getNetwork().sendToServer(new PacketGuiButton(button.id, new NBTBuilder().setString("recipe", recipeName.toString()).build()));
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setString("recipe", recipeName.toString()); // String instead of sending a whole tag
+            TerraFirmaCraft.getNetwork().sendToServer(new PacketGuiButton(button.id, tag));
         }
         else if (button == buttonLeft)
         {
