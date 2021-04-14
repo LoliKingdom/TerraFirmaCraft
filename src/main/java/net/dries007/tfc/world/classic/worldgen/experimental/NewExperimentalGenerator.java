@@ -361,8 +361,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
         {
             for (int localZ = 0; localZ < 16; ++localZ)
             {
-                Biome biome = biomes[localZ + localX * 16];
-                biome.genTerrainBlocks(world, rand, primer, chunkX * 16 + localX, chunkZ * 16 + localZ, stoneNoiseArray[localZ + localX * 16]);
+                biomes[localZ + localX * 16].genTerrainBlocks(world, rand, primer, chunkX * 16 + localX, chunkZ * 16 + localZ, stoneNoiseArray[localZ + localX * 16]);
             }
         }
         rockLayer2 = GenLayerTFC.initializeRock(world.getSeed() + 2, RockCategory.Layer.MIDDLE, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
