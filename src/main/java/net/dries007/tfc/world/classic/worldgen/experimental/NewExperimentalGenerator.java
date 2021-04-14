@@ -377,7 +377,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
                 Rock rock2 = ((ForgeRegistry<Rock>) TFCRegistries.ROCKS).getValue(rockLayer2[colIndex]);
                 Rock rock3 = ((ForgeRegistry<Rock>) TFCRegistries.ROCKS).getValue(rockLayer3[colIndex]);
 
-                primer.replaceBlockStates(biomes[localZ + localX * 16], localX, localZ, rock1, rock2, rock3);
+                primer.replaceBlockStates(biomes[localZ << 4 | localX], localX, localZ, rock1, rock2, rock3);
             }
         }
     }

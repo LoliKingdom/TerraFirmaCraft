@@ -87,9 +87,9 @@ public class WorldGenOreVeins implements IWorldGenerator
                         for (int y = vein.getLowestY(); y <= vein.getHighestY(); y++)
                         {
                             final BlockPos posAt = new BlockPos(x, y, z);
-                            final IBlockState stateAt = world.getBlockState(posAt);
+                            final IBlockState stateAt;
                             // Do checks specific to the individual block pos that is getting replaced
-                            if (random.nextDouble() <= vein.getChanceToGenerate(posAt) && stateAt.getBlock() instanceof BlockRockVariant)
+                            if (random.nextDouble() <= vein.getChanceToGenerate(posAt) && (stateAt = world.getBlockState(posAt)).getBlock() instanceof BlockRockVariant)
                             {
                                 final BlockRockVariant blockAt = (BlockRockVariant) stateAt.getBlock();
                                 if (blockAt.getType() == Rock.Type.RAW && vein.canSpawnIn(blockAt.getRock()))

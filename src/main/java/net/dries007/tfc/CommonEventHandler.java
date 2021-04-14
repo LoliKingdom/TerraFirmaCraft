@@ -93,7 +93,6 @@ import net.dries007.tfc.api.capability.worldtracker.CapabilityWorldTracker;
 import net.dries007.tfc.api.capability.worldtracker.WorldTracker;
 import net.dries007.tfc.api.types.*;
 import net.dries007.tfc.api.util.FallingBlockManager;
-import net.dries007.tfc.compat.patchouli.TFCPatchouliPlugin;
 import net.dries007.tfc.network.PacketCalendarUpdate;
 import net.dries007.tfc.network.PacketPlayerDataUpdate;
 import net.dries007.tfc.objects.blocks.BlockFluidTFC;
@@ -582,13 +581,6 @@ public final class CommonEventHandler
             IPlayerData playerData = player.getCapability(CapabilityPlayerData.CAPABILITY, null);
             if (playerData != null)
             {
-                // Give book if possible
-                if (Loader.isModLoaded("patchouli") && !playerData.hasBook() && ConfigTFC.General.MISC.giveBook)
-                {
-                    TFCPatchouliPlugin.giveBookToPlayer(player);
-                    playerData.setHasBook(true);
-                }
-
                 // Sync
                 TerraFirmaCraft.getNetwork().sendTo(new PacketPlayerDataUpdate(playerData.serializeNBT()), player);
             }
@@ -631,13 +623,6 @@ public final class CommonEventHandler
             IPlayerData cap = player.getCapability(CapabilityPlayerData.CAPABILITY, null);
             if (cap != null)
             {
-                // Give book if possible
-                if (Loader.isModLoaded("patchouli") && !(event.isEndConquered() || player.world.getGameRules().getBoolean("keepInventory")) && ConfigTFC.General.MISC.giveBook)
-                {
-                    TFCPatchouliPlugin.giveBookToPlayer(player);
-                    cap.setHasBook(true);
-                }
-
                 TerraFirmaCraft.getNetwork().sendTo(new PacketPlayerDataUpdate(cap.serializeNBT()), player);
             }
         }
