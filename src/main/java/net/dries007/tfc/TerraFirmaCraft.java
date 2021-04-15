@@ -21,7 +21,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
 import net.dries007.tfc.api.capability.damage.CapabilityDamageResistance;
-import net.dries007.tfc.api.capability.egg.CapabilityEgg;
 import net.dries007.tfc.api.capability.food.CapabilityFood;
 import net.dries007.tfc.api.capability.food.FoodHandler;
 import net.dries007.tfc.api.capability.forge.CapabilityForgeable;
@@ -140,7 +139,6 @@ public final class TerraFirmaCraft
         CapabilityItemHeat.preInit();
         CapabilityForgeable.preInit();
         CapabilityFood.preInit();
-        CapabilityEgg.preInit();
         CapabilityPlayerData.preInit();
         CapabilityDamageResistance.preInit();
         CapabilityMetalItem.preInit();

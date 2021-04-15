@@ -35,6 +35,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.dries007.tfc.api.registries.TFCRegistries;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.api.types.RockCategory;
+import net.dries007.tfc.world.classic.WorldTypeTFC;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataProvider;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataTFC;
 import net.dries007.tfc.world.classic.genlayers.GenLayerTFC;
@@ -85,7 +86,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
     {
         this.world = world;
         this.rand = new Random(world.getSeed());
-        this.worldSettings = NewBiomeProvider.settings;
+        this.worldSettings = WorldTypeTFC.settings;
         this.xyzNoiseGenA = new NoiseGeneratorOctaves(rand, 16);
         this.xyzNoiseGenB = new NoiseGeneratorOctaves(rand, 16);
         this.xyzBalanceNoiseGen = new NoiseGeneratorOctaves(rand, 8);
@@ -107,7 +108,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
         for (Biome biome : ForgeRegistries.BIOMES)
         {
             TerrainSettings setting = biome instanceof BOPOverworldBiome ? ((BOPOverworldBiome) biome).terrainSettings : TerrainSettings.forVanillaBiome(biome);
-            // setting.avgHeight += 96 - 64;
+            setting.avgHeight += 95 - 64;
             this.biomeTerrainSettings.put(biome, setting);
         }
     }
@@ -184,10 +185,10 @@ public class NewExperimentalGenerator implements IChunkGenerator
             target = decorateStart.add(rand.nextInt(16), rand.nextInt(256), rand.nextInt(16));
             new WorldGenLakes(Blocks.WATER).generate(world, rand, target);
         }
-        if (!hasVillageGenerated && (BOPBiomes.redwood_forest.isPresent() && biome != BOPBiomes.redwood_forest.get()) && (BOPBiomes.redwood_forest_edge.isPresent() && biome != BOPBiomes.redwood_forest_edge.get()) && (BOPBiomes.wasteland.isPresent() && biome != BOPBiomes.wasteland.get()) && this.rand.nextInt(worldSettings.lavaLakeChance / 10) == 0 && worldSettings.useLavaLakes && TerrainGen.populate(this, world, rand, chunkX, chunkZ, hasVillageGenerated, PopulateChunkEvent.Populate.EventType.LAVA))
+        if (!hasVillageGenerated && biome != BOPBiomes.redwood_forest.get() && biome != BOPBiomes.redwood_forest_edge.get() && biome != BOPBiomes.wasteland.get() && this.rand.nextInt(worldSettings.lavaLakeChance / 10) == 0 && worldSettings.useLavaLakes && TerrainGen.populate(this, world, rand, chunkX, chunkZ, hasVillageGenerated, PopulateChunkEvent.Populate.EventType.LAVA))
         {
             target = decorateStart.add(rand.nextInt(16), rand.nextInt(248) + 8, rand.nextInt(16));
-            if (target.getY() < 63 || this.rand.nextInt(worldSettings.lavaLakeChance / 8) == 0)
+            if (target.getY() < worldSettings.seaLevel || this.rand.nextInt(worldSettings.lavaLakeChance / 8) == 0)
             {
                 new WorldGenLakes(Blocks.LAVA).generate(world, rand, target);
             }

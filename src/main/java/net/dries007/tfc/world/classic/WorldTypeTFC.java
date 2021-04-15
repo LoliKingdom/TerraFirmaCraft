@@ -18,6 +18,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import biomesoplenty.common.world.BOPWorldSettings;
 import mcp.MethodsReturnNonnullByDefault;
 import net.dries007.tfc.world.classic.worldgen.experimental.NewBiomeProvider;
 import net.dries007.tfc.world.classic.worldgen.experimental.NewExperimentalGenerator;
@@ -29,6 +30,28 @@ public class WorldTypeTFC extends WorldType
     @Deprecated public static final int SEALEVEL = 144;
     @Deprecated public static final int ROCKLAYER2 = 110;
     @Deprecated public static final int ROCKLAYER3 = 55;
+
+    public static final BOPWorldSettings settings; // Relocate to our own WorldType
+
+    static
+    {
+        settings = new BOPWorldSettings();
+        settings.seaLevel = 95;
+        settings.amplitude = 1.8F;
+        settings.biomeSize = BOPWorldSettings.BiomeSize.MEDIUM;
+        settings.landScheme = BOPWorldSettings.LandMassScheme.CONTINENTS;
+        settings.rainScheme = BOPWorldSettings.RainfallVariationScheme.MEDIUM_ZONES;
+        settings.tempScheme = BOPWorldSettings.TemperatureVariationScheme.LATITUDE;
+        settings.mainNoiseScaleX = 80.0F;
+        settings.mainNoiseScaleY = 160.0F;
+        settings.mainNoiseScaleZ = 80.0F;
+        settings.coordinateScale = 684.412F;
+        settings.heightScale = 684.412F;
+        settings.upperLimitScale = 512.0F;
+        settings.generateBopGems = false;
+        settings.generateNetherHives = false;
+        settings.dungeonChance = 4;
+    }
 
     public WorldTypeTFC()
     {
@@ -52,23 +75,14 @@ public class WorldTypeTFC extends WorldType
     @Override
     public int getMinimumSpawnHeight(World world)
     {
-        return 64;
-        // return 96; //todo
-    }
-
-    /*
-    @Override
-    public int getMinimumSpawnHeight(World world)
-    {
-        return SEALEVEL; //todo
+        return settings.seaLevel;
     }
 
     @Override
     public double getHorizon(World world)
     {
-        return SEALEVEL; //todo
+        return settings.seaLevel;
     }
-     */
 
     @Override
     public int getSpawnFuzz(WorldServer world, MinecraftServer server)
@@ -88,13 +102,11 @@ public class WorldTypeTFC extends WorldType
     public boolean isCustomizable()
     {
         return false;
-        // return true;
     }
 
     @Override
     public float getCloudHeight()
     {
-        return 225;
-        // return 2 * SEALEVEL;
+        return settings.seaLevel * 2;
     }
 }

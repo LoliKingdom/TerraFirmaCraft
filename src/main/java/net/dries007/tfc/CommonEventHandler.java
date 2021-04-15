@@ -63,7 +63,6 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -73,8 +72,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import net.dries007.tfc.api.capability.damage.CapabilityDamageResistance;
 import net.dries007.tfc.api.capability.damage.DamageType;
-import net.dries007.tfc.api.capability.egg.CapabilityEgg;
-import net.dries007.tfc.api.capability.egg.EggHandler;
 import net.dries007.tfc.api.capability.food.*;
 import net.dries007.tfc.api.capability.forge.CapabilityForgeable;
 import net.dries007.tfc.api.capability.forge.ForgeableHeatableHandler;
@@ -521,12 +518,6 @@ public final class CommonEventHandler
                 {
                     event.addCapability(CapabilityDamageResistance.KEY, damageResistance);
                 }
-            }
-
-            // Eggs
-            if (stack.getItem() == Items.EGG)
-            {
-                event.addCapability(CapabilityEgg.KEY, new EggHandler());
             }
         }
     }
