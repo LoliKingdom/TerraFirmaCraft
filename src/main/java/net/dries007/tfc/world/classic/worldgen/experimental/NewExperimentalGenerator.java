@@ -46,19 +46,12 @@ import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.Ev
 
 public class NewExperimentalGenerator implements IChunkGenerator
 {
-    public static Map<ChunkPos, int[]> rockLayerCache = new Object2ObjectOpenHashMap<>(); // For RiverGenerator
-
-    private static final int yOffset = 114;
-    private static final int seaLevel = 32;
+    public static final Map<ChunkPos, int[]> rockLayerCache = new Object2ObjectOpenHashMap<>(); // For RiverGenerator
 
     private static final IBlockState STONE = Blocks.STONE.getDefaultState();
     private static final IBlockState WATER = Blocks.WATER.getDefaultState();
-    // private static final IBlockState HOT_WATER = FluidsTFC.HOT_WATER.get().getBlock().getDefaultState();
-    private static final IBlockState LAVA = Blocks.LAVA.getDefaultState();
-    private static final IBlockState BEDROCK = Blocks.BEDROCK.getDefaultState();
 
     private static final float[] radialFalloff5x5 = new float[25];
-    private static final float[] radialStrongFalloff5x5 = new float[25];
 
     static {
         for (int j = -2; j <= 2; ++j)
@@ -66,7 +59,6 @@ public class NewExperimentalGenerator implements IChunkGenerator
             for (int k = -2; k <= 2; ++k)
             {
                 radialFalloff5x5[j + 2 + (k + 2) * 5] = 0.06476162171F / MathHelper.sqrt((float) (j * j + k * k) + 0.2F);
-                radialStrongFalloff5x5[j + 2 + (k + 2) * 5] = 0.076160519601F / ((float) (j * j + k * k) + 0.2F);
             }
         }
     }
@@ -86,32 +78,19 @@ public class NewExperimentalGenerator implements IChunkGenerator
     private final StructureOceanMonument oceanMonumentGenerator;
     private final WoodlandMansion woodlandMansionGenerator;
 
-    private final double[] stoneNoiseArray;
     private final double[] noiseArray;
     private final Map<Biome, TerrainSettings> biomeTerrainSettings;
 
-    private double[] xyzBalanceNoiseArray, xyzNoiseArrayA, xyzNoiseArrayB;
-
-    private int[] rockLayer1, rockLayer2, rockLayer3;
-
-    public NewExperimentalGenerator(World world, String settingsString)
+    public NewExperimentalGenerator(World world)
     {
         this.world = world;
         this.rand = new Random(world.getSeed());
-        this.worldSettings = new BOPWorldSettings();
-        worldSettings.seaLevel = 96;
-        worldSettings.amplitude = 2.4F;
-        worldSettings.biomeSize = BOPWorldSettings.BiomeSize.SMALL;
-        worldSettings.generateBopGems = false;
-        worldSettings.generateNetherHives = false;
-        worldSettings.dungeonChance = 4;
-        // this.worldSettings = new BOPWorldSettings(settingsString);
+        this.worldSettings = NewBiomeProvider.settings;
         this.xyzNoiseGenA = new NoiseGeneratorOctaves(rand, 16);
         this.xyzNoiseGenB = new NoiseGeneratorOctaves(rand, 16);
         this.xyzBalanceNoiseGen = new NoiseGeneratorOctaves(rand, 8);
         this.stoneNoiseGen = new NoiseGeneratorPerlin(rand, 4);
         this.byteNoiseGen = new NoiseGeneratorBOPByte(rand, 6, 5, 5);
-        this.stoneNoiseArray = new double[256];
         this.noiseArray = new double[825];
 
         this.caveGenerator = TerrainGen.getModdedMapGen(new MapGenCaves(), CAVE);
@@ -128,7 +107,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
         for (Biome biome : ForgeRegistries.BIOMES)
         {
             TerrainSettings setting = biome instanceof BOPOverworldBiome ? ((BOPOverworldBiome) biome).terrainSettings : TerrainSettings.forVanillaBiome(biome);
-            setting.avgHeight += 96 - 64;
+            // setting.avgHeight += 96 - 64;
             this.biomeTerrainSettings.put(biome, setting);
         }
     }
@@ -137,26 +116,27 @@ public class NewExperimentalGenerator implements IChunkGenerator
     public Chunk generateChunk(int chunkX, int chunkZ)
     {
         rand.setSeed((long) chunkX * 341873128712L + (long) chunkZ * 132897987541L);
-        TrackedChunkPrimer chunkprimer = new TrackedChunkPrimer();
-        prepareChunk(chunkX, chunkZ, chunkprimer);
-        Biome[] biomes = world.getBiomeProvider().getBiomes(null, chunkX * 16, chunkZ * 16, 16, 16);
-        generateTerrain(chunkX, chunkZ, chunkprimer, biomes);
+        TrackedChunkPrimer primer = new TrackedChunkPrimer();
+        prepareChunk(chunkX, chunkZ, primer);
+        Biome[] biomes = world.getBiomeProvider().getBiomes(null, chunkX * 16, chunkZ * 16, 16, 16, false); // No need to cache this result
+        RockLayerContainer container = generateTerrain(chunkX, chunkZ, primer, biomes);
 
         // No stronghold generation, that would be a custom structure.
-        caveGenerator.generate(world, chunkX, chunkZ, chunkprimer);
-        ravineGenerator.generate(world, chunkX, chunkZ, chunkprimer);
-        mineshaftGenerator.generate(world, chunkX, chunkZ, chunkprimer);
-        villageGenerator.generate(world, chunkX, chunkZ, chunkprimer);
-        scatteredFeatureGenerator.generate(world, chunkX, chunkZ, chunkprimer);
-        oceanMonumentGenerator.generate(world, chunkX, chunkZ, chunkprimer);
-        woodlandMansionGenerator.generate(world, chunkX, chunkZ, chunkprimer);
-        Chunk chunk = new Chunk(world, chunkprimer, chunkX, chunkZ);
+        caveGenerator.generate(world, chunkX, chunkZ, primer);
+        ravineGenerator.generate(world, chunkX, chunkZ, primer);
+        mineshaftGenerator.generate(world, chunkX, chunkZ, primer);
+        villageGenerator.generate(world, chunkX, chunkZ, primer);
+        scatteredFeatureGenerator.generate(world, chunkX, chunkZ, primer);
+        oceanMonumentGenerator.generate(world, chunkX, chunkZ, primer);
+        woodlandMansionGenerator.generate(world, chunkX, chunkZ, primer);
+
+        Chunk chunk = new Chunk(world, primer, chunkX, chunkZ);
         ChunkDataTFC chunkData = chunk.getCapability(ChunkDataProvider.CHUNK_DATA_CAPABILITY, null);
         if (chunkData == null)
         {
             throw new IllegalStateException("Chunk Data not found!");
         }
-        chunkData.setGenerationData(rockLayer1, rockLayer2, rockLayer3, 0F, 0F, 0F, 0F, 0F);
+        chunkData.setGenerationData(container.rockLayer1, container.rockLayer2, container.rockLayer3, 0F, 0F, 0F, 0F, 0F);
         byte[] chunkBiomes = chunk.getBiomeArray();
         for (int k = 0; k < chunkBiomes.length; ++k)
         {
@@ -346,17 +326,16 @@ public class NewExperimentalGenerator implements IChunkGenerator
         }
     }
 
-    private void generateTerrain(int chunkX, int chunkZ, TrackedChunkPrimer primer, Biome[] biomes)
+    private RockLayerContainer generateTerrain(int chunkX, int chunkZ, TrackedChunkPrimer primer, Biome[] biomes)
     {
-        rockLayer1 = GenLayerTFC.initializeRock(world.getSeed() + 1, RockCategory.Layer.TOP, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
+        int[] rockLayer1 = GenLayerTFC.initializeRock(world.getSeed() + 1, RockCategory.Layer.TOP, 4).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
         ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
         rockLayerCache.put(chunkPos, rockLayer1);
-        if (!ForgeEventFactory.onReplaceBiomeBlocks(this, chunkX, chunkZ, primer, world))
-        {
-            return;
-        }
+
+        ForgeEventFactory.onReplaceBiomeBlocks(this, chunkX, chunkZ, primer, world); // Fuck the result
+
         double d0 = 0.03125D;
-        stoneNoiseGen.getRegion(stoneNoiseArray, chunkX * 16, chunkZ * 16, 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+        double[] stoneNoiseArray = stoneNoiseGen.getRegion(null, chunkX * 16, chunkZ * 16, 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
         for (int localX = 0; localX < 16; ++localX)
         {
             for (int localZ = 0; localZ < 16; ++localZ)
@@ -364,8 +343,8 @@ public class NewExperimentalGenerator implements IChunkGenerator
                 biomes[localZ + localX * 16].genTerrainBlocks(world, rand, primer, chunkX * 16 + localX, chunkZ * 16 + localZ, stoneNoiseArray[localZ + localX * 16]);
             }
         }
-        rockLayer2 = GenLayerTFC.initializeRock(world.getSeed() + 2, RockCategory.Layer.MIDDLE, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
-        rockLayer3 = GenLayerTFC.initializeRock(world.getSeed() + 3, RockCategory.Layer.BOTTOM, 5).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
+        int[] rockLayer2 = GenLayerTFC.initializeRock(world.getSeed() + 2, RockCategory.Layer.MIDDLE, 4).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
+        int[] rockLayer3 = GenLayerTFC.initializeRock(world.getSeed() + 3, RockCategory.Layer.BOTTOM, 4).getInts(chunkX * 16, chunkZ * 16, 16, 16).clone();
         for (int localX = 0; localX < 16; ++localX)
         {
             for (int localZ = 0; localZ < 16; ++localZ)
@@ -379,6 +358,10 @@ public class NewExperimentalGenerator implements IChunkGenerator
                 primer.replaceBlockStates(biomes[localZ << 4 | localX], localX, localZ, rock1, rock2, rock3);
             }
         }
+
+        primer.clear();
+
+        return new RockLayerContainer(rockLayer1, rockLayer2, rockLayer3);
     }
 
     private void prepareChunk(int chunkX, int chunkZ, ChunkPrimer primer)
@@ -532,9 +515,9 @@ public class NewExperimentalGenerator implements IChunkGenerator
         byteNoiseGen.generateNoise(subchunkX, subchunkZ);
 
         // generate the xyz noise for the chunk
-        xyzBalanceNoiseArray = xyzBalanceNoiseGen.generateNoiseOctaves(xyzBalanceNoiseArray, subchunkX, subchunkY, subchunkZ, 5, 33, 5, coordinateScale / mainNoiseScaleX, heightScale / mainNoiseScaleY, (coordinateScale / mainNoiseScaleZ));
-        xyzNoiseArrayA = xyzNoiseGenA.generateNoiseOctaves(xyzNoiseArrayA, subchunkX, subchunkY, subchunkZ, 5, 33, 5, coordinateScale, heightScale, coordinateScale);
-        xyzNoiseArrayB = xyzNoiseGenB.generateNoiseOctaves(xyzNoiseArrayB, subchunkX, subchunkY, subchunkZ, 5, 33, 5, coordinateScale, heightScale, coordinateScale);
+        double[] xyzBalanceNoiseArray = xyzBalanceNoiseGen.generateNoiseOctaves(null, subchunkX, subchunkY, subchunkZ, 5, 33, 5, coordinateScale / mainNoiseScaleX, heightScale / mainNoiseScaleY, (coordinateScale / mainNoiseScaleZ));
+        double[] xyzNoiseArrayA = xyzNoiseGenA.generateNoiseOctaves(null, subchunkX, subchunkY, subchunkZ, 5, 33, 5, coordinateScale, heightScale, coordinateScale);
+        double[] xyzNoiseArrayB = xyzNoiseGenB.generateNoiseOctaves(null, subchunkX, subchunkY, subchunkZ, 5, 33, 5, coordinateScale, heightScale, coordinateScale);
 
         // loop over the subchunks and calculate the overall noise value
         int xyzCounter = 0;
@@ -607,6 +590,18 @@ public class NewExperimentalGenerator implements IChunkGenerator
         public void setBlocksInChunk(int x, int z, ChunkPrimer primer)
         {
             prepareChunk(x, z, primer);
+        }
+    }
+
+    private class RockLayerContainer
+    {
+        private final int[] rockLayer1, rockLayer2, rockLayer3;
+
+        private RockLayerContainer(int[] rockLayer1, int[] rockLayer2, int[] rockLayer3)
+        {
+            this.rockLayer1 = rockLayer1;
+            this.rockLayer2 = rockLayer2;
+            this.rockLayer3 = rockLayer3;
         }
     }
 }

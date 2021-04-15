@@ -40,8 +40,13 @@ public class TrackedChunkPrimer extends ChunkPrimer
     private static final IBlockState SALT_WATER = FluidsTFC.SALT_WATER.get().getBlock().getDefaultState();
 
     // Air: -1, Stone: 1, Dirt: 2, Grass Block: 3, Gravel: 4, Sand: 5, Water: 6, Clay Grass: 7, Clay Dirt: 8, Dry Grass: 9, Peat: 10, everything else: 0
-    private final byte[] trackingArray = new byte[65536];
-    private final int[] peaks = new int[256];
+    private byte[] trackingArray = new byte[65536];
+    private int[] peaks = new int[256];
+
+    public void clear() {
+        trackingArray = null;
+        peaks = null;
+    }
 
     public void replaceBlockStates(Biome biome, int x, int z, Rock rock1, Rock rock2, Rock rock3)
     {
@@ -105,7 +110,12 @@ public class TrackedChunkPrimer extends ChunkPrimer
     @Override
     public void setBlockState(int x, int y, int z, IBlockState state)
     {
-        if (state == AIR)
+        if (trackingArray == null) // TODO: Transform instead of doing this check
+        {
+            super.setBlockState(x, y, z, state);
+            return;
+        }
+        else if (state == AIR)
         {
             trackingArray[x << 12 | z << 8 | y] = -1;
         }

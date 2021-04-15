@@ -19,7 +19,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import mcp.MethodsReturnNonnullByDefault;
-import net.dries007.tfc.client.gui.GuiCustomizeWorld;
+import net.dries007.tfc.world.classic.worldgen.experimental.NewBiomeProvider;
+import net.dries007.tfc.world.classic.worldgen.experimental.NewExperimentalGenerator;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -37,15 +38,25 @@ public class WorldTypeTFC extends WorldType
     @Override
     public BiomeProvider getBiomeProvider(World world)
     {
-        return new BiomeProviderTFC(world);
+        return new NewBiomeProvider(world.getSeed(), this);
+        // return new BiomeProviderTFC(world);
     }
 
     @Override
     public IChunkGenerator getChunkGenerator(World world, String generatorOptions)
     {
-        return new ChunkGenTFC(world, generatorOptions);
+        return new NewExperimentalGenerator(world);
+        // return new ChunkGenTFC(world, generatorOptions);
     }
 
+    @Override
+    public int getMinimumSpawnHeight(World world)
+    {
+        return 64;
+        // return 96; //todo
+    }
+
+    /*
     @Override
     public int getMinimumSpawnHeight(World world)
     {
@@ -57,6 +68,7 @@ public class WorldTypeTFC extends WorldType
     {
         return SEALEVEL; //todo
     }
+     */
 
     @Override
     public int getSpawnFuzz(WorldServer world, MinecraftServer server)
@@ -69,18 +81,20 @@ public class WorldTypeTFC extends WorldType
     @SideOnly(Side.CLIENT)
     public void onCustomizeButton(Minecraft mc, GuiCreateWorld guiCreateWorld)
     {
-        mc.displayGuiScreen(new GuiCustomizeWorld(guiCreateWorld, guiCreateWorld.chunkProviderSettingsJson));
+        // mc.displayGuiScreen(new GuiCustomizeWorld(guiCreateWorld, guiCreateWorld.chunkProviderSettingsJson));
     }
 
     @Override
     public boolean isCustomizable()
     {
-        return true;
+        return false;
+        // return true;
     }
 
     @Override
     public float getCloudHeight()
     {
-        return 2 * SEALEVEL;
+        return 225;
+        // return 2 * SEALEVEL;
     }
 }
