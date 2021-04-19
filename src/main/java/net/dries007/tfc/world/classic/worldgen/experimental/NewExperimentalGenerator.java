@@ -21,6 +21,7 @@ import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraft.world.gen.structure.*;
 
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -40,7 +41,6 @@ import net.dries007.tfc.world.classic.chunkdata.ChunkDataProvider;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataTFC;
 import net.dries007.tfc.world.classic.genlayers.GenLayerTFC;
 import net.dries007.tfc.world.classic.worldgen.WorldGenLargeRocks;
-import net.dries007.tfc.world.classic.worldgen.WorldGenOreVeins;
 
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
 import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
@@ -108,8 +108,11 @@ public class NewExperimentalGenerator implements IChunkGenerator
         for (Biome biome : ForgeRegistries.BIOMES)
         {
             TerrainSettings setting = biome instanceof BOPOverworldBiome ? ((BOPOverworldBiome) biome).terrainSettings : TerrainSettings.forVanillaBiome(biome);
-            System.out.println("Height: " + setting.avgHeight);
-            setting.avgHeight += 14;
+            System.out.println("Height: " + setting.avgHeight + " | Biome: " + biome.getBiomeName());
+            if (!BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
+            {
+                setting.avgHeight += 14;
+            }
             this.biomeTerrainSettings.put(biome, setting);
         }
     }

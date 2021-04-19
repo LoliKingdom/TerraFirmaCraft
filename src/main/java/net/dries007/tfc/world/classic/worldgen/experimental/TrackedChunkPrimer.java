@@ -1,5 +1,6 @@
 package net.dries007.tfc.world.classic.worldgen.experimental;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
@@ -34,12 +35,13 @@ public class TrackedChunkPrimer extends ChunkPrimer
     private static final IBlockState SANDY_GRASS = BOPBlocks.grass.getDefaultState().withProperty(BlockBOPGrass.VARIANT, BlockBOPGrass.BOPGrassType.SANDY);
     private static final IBlockState GRAVEL = Blocks.GRAVEL.getDefaultState();
     private static final IBlockState SAND = Blocks.SAND.getDefaultState();
-    private static final IBlockState SANDSTONE = Blocks.SANDSTONE.getDefaultState();
     private static final IBlockState MUD = BOPBlocks.mud.getDefaultState().withProperty(BlockBOPMud.VARIANT, BlockBOPMud.MudType.MUD); // Why...?
     private static final IBlockState WATER = Blocks.WATER.getDefaultState();
     private static final IBlockState SALT_WATER = FluidsTFC.SALT_WATER.get().getBlock().getDefaultState();
 
-    // Air: -1, Stone: 1, Dirt: 2, Grass Block: 3, Gravel: 4, Sand: 5, Water: 6, Clay Grass: 7, Clay Dirt: 8, Dry Grass: 9, Peat: 10, everything else: 0
+    private static final Block SANDSTONE = Blocks.SANDSTONE;
+
+    // Air: -1, Stone: 1, Dirt: 2, Grass Block: 3, Gravel: 4, Sand: 5, Water: 6, Clay Grass: 7, Clay Dirt: 8, Dry Grass: 9, Peat: 10, Sandstone: 11, everything else: 0
     private byte[] trackingArray = new byte[65536];
     private int[] peaks = new int[256];
 
@@ -101,6 +103,8 @@ public class TrackedChunkPrimer extends ChunkPrimer
                 case 10:
                     super.setBlockState(x, localY, z, trackingArray[x << 12 | z << 8 | (localY + 1)] == -1 ? BlocksTFC.PEAT_GRASS.getDefaultState() : BlocksTFC.PEAT.getDefaultState());
                     break;
+                case 11:
+                    super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.SANDSTONE).getDefaultState());
                 default:
                     break;
             }
@@ -119,7 +123,7 @@ public class TrackedChunkPrimer extends ChunkPrimer
         {
             trackingArray[x << 12 | z << 8 | y] = -1;
         }
-        else if (state == STONE || state == OVERGROWN_STONE || state == SANDSTONE)
+        else if (state == STONE || state == OVERGROWN_STONE)
         {
             trackingArray[x << 12 | z << 8 | y] = 1;
 
@@ -203,6 +207,15 @@ public class TrackedChunkPrimer extends ChunkPrimer
         else if (state == MUD)
         {
             trackingArray[x << 12 | z << 8 | y] = 10;
+
+            if (peaks[x << 4 | z] < y)
+            {
+                peaks[x << 4 | z] = y;
+            }
+        }
+        else if (state.getBlock() == SANDSTONE)
+        {
+            trackingArray[x << 12 | z << 8 | y] = 11;
 
             if (peaks[x << 4 | z] < y)
             {
