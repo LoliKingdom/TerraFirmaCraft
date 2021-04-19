@@ -26,7 +26,6 @@ import net.dries007.tfc.api.util.IRockObject;
 import net.dries007.tfc.client.TFCGuiHandler;
 import net.dries007.tfc.objects.items.ItemTFC;
 import net.dries007.tfc.util.OreDictionaryHelper;
-import zone.rong.zairyou.api.block.SurfaceRockBlock;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -109,7 +108,7 @@ public class ItemRock extends ItemTFC implements IRockObject
             BlockPos placePos;
             if (world.isSideSolid(pos, facing) && (world.isAirBlock(placePos = pos.up()) || world.getBlockState(placePos).getBlock().isReplaceable(world, placePos)))
             {
-                world.setBlockState(placePos, SurfaceRockBlock.get(this.rock), 3);
+                // world.setBlockState(placePos, SurfaceRockBlock.get(this.rock), 3);
                 world.playSound(null, placePos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 0.5F, 0.5F);
                 return EnumActionResult.SUCCESS;
             }

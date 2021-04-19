@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import net.dries007.tfc.objects.blocks.stone.BlockFarmlandTFC;
-import zone.rong.zairyou.api.ore.block.SurfaceOreRockBlock;
 
 public class BlockStick extends Block
 {
@@ -84,11 +83,13 @@ public class BlockStick extends Block
         return BlockFaceShape.UNDEFINED;
     }
 
+    /*
     @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return SurfaceOreRockBlock.GROUNDCOVER_AABB;
     }
+     */
 
     @Nullable
     @Override

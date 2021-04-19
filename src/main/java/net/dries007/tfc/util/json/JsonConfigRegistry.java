@@ -84,18 +84,6 @@ public enum JsonConfigRegistry
         {
             throw new Error("Problem creating default entity resistance config file.", e);
         }
-        defaultFile = new File(tfcConfigDir, "animal_food_data.json");
-        try
-        {
-            if (defaultFile.createNewFile())
-            {
-                FileUtils.copyInputStreamToFile(Objects.requireNonNull(JsonConfigRegistry.class.getClassLoader().getResourceAsStream(DEFAULT_ANIMAL_FOOD)), defaultFile);
-            }
-        }
-        catch (IOException e)
-        {
-            throw new Error("Problem creating default animal food config file.", e);
-        }
     }
 
     public void postInit()

@@ -24,9 +24,6 @@ import net.dries007.tfc.objects.blocks.BlocksTFC;
 import net.dries007.tfc.world.classic.ChunkGenTFC;
 import net.dries007.tfc.world.classic.chunkdata.ChunkDataTFC;
 import net.dries007.tfc.world.classic.worldgen.vein.Vein;
-import zone.rong.zairyou.api.block.SurfaceRockBlock;
-import zone.rong.zairyou.api.material.Material;
-import zone.rong.zairyou.api.material.type.BlockMaterialType;
 
 public class WorldGenLooseRocks implements IWorldGenerator
 {
@@ -116,6 +113,7 @@ public class WorldGenLooseRocks implements IWorldGenerator
             BlockPos downPos = pos.down();
             IBlockState downState = world.getBlockState(downPos);
             if (BlocksTFC.isSoil(downState) && downState.isSideSolid(world, downPos, EnumFacing.UP)) {
+                /*
                 if (vein != null && vein.getType() != null) {
                     Material ore = Material.get(vein.getType().getOre().toString());
                     if (ore != null && ore.hasType(BlockMaterialType.ORE_SURFACE_ROCK)) { // TODO
@@ -124,6 +122,7 @@ public class WorldGenLooseRocks implements IWorldGenerator
                 } else {
                     world.setBlockState(pos, SurfaceRockBlock.get(rock), 2);
                 }
+                 */
             }
         }
     }
