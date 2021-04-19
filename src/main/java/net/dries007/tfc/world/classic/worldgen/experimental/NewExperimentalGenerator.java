@@ -108,7 +108,8 @@ public class NewExperimentalGenerator implements IChunkGenerator
         for (Biome biome : ForgeRegistries.BIOMES)
         {
             TerrainSettings setting = biome instanceof BOPOverworldBiome ? ((BOPOverworldBiome) biome).terrainSettings : TerrainSettings.forVanillaBiome(biome);
-            setting.avgHeight += 95 - 64;
+            System.out.println("Height: " + setting.avgHeight);
+            setting.avgHeight += 14;
             this.biomeTerrainSettings.put(biome, setting);
         }
     }
@@ -169,7 +170,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
 
         ForgeEventFactory.onChunkPopulate(true, this, world, rand, chunkX, chunkZ, hasVillageGenerated);
 
-        new WorldGenOreVeins().generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
+        // new WorldGenOreVeins().generate(rand, chunkX, chunkZ, world, this, world.getChunkProvider());
 
         mineshaftGenerator.generateStructure(world, rand, chunkPos);
         hasVillageGenerated = villageGenerator.generateStructure(world, rand, chunkPos);

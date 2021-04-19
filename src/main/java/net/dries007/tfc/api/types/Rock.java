@@ -137,10 +137,13 @@ public class Rock extends IForgeRegistryEntry.Impl<Rock> implements Comparable<R
         RAW(Material.ROCK, false, Specification.COLLAPSABLE),
         ANVIL(Material.ROCK, false, Specification.COLLAPSABLE),
         SPIKE(Material.ROCK, false, null),
-        SMOOTH(Material.ROCK, false, null),
+        SMOOTH(Material.ROCK, false, Specification.COLLAPSABLE),
         COBBLE(Material.ROCK, false, new Specification(true, () -> TFCSounds.ROCK_SLIDE_SHORT)),
         BRICKS(Material.ROCK, false, null),
         SAND(Material.SAND, false, Specification.VERTICAL_AND_HORIZONTAL),
+        SANDSTONE(Material.ROCK, false, Specification.COLLAPSABLE),
+        // CUT_SANDSTONE(Material.ROCK, false, null), TODO
+        // SMOOTH_SANDSTONE(Material.ROCK, false, null), TODO
         GRAVEL(Material.SAND, false, Specification.VERTICAL_AND_HORIZONTAL),
         DIRT(Material.GROUND, false, Specification.VERTICAL_AND_HORIZONTAL),
         GRASS(Material.GRASS, true, Specification.VERTICAL_AND_HORIZONTAL),
