@@ -1,17 +1,23 @@
 package net.dries007.tfc.world.classic.worldgen.experimental;
 
+import java.util.Set;
+import java.util.function.Predicate;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 
 import net.minecraftforge.common.BiomeDictionary;
 
+import biomesoplenty.api.biome.BOPBiomes;
 import biomesoplenty.api.block.BOPBlocks;
 import biomesoplenty.common.block.BlockBOPDirt;
 import biomesoplenty.common.block.BlockBOPGrass;
 import biomesoplenty.common.block.BlockBOPMud;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.dries007.tfc.api.types.Rock;
 import net.dries007.tfc.objects.blocks.BlocksTFC;
 import net.dries007.tfc.objects.blocks.stone.BlockRockVariant;
@@ -34,12 +40,21 @@ public class TrackedChunkPrimer extends ChunkPrimer
     private static final IBlockState SILTY_GRASS = BOPBlocks.grass.getDefaultState().withProperty(BlockBOPGrass.VARIANT, BlockBOPGrass.BOPGrassType.SILTY);
     private static final IBlockState SANDY_GRASS = BOPBlocks.grass.getDefaultState().withProperty(BlockBOPGrass.VARIANT, BlockBOPGrass.BOPGrassType.SANDY);
     private static final IBlockState GRAVEL = Blocks.GRAVEL.getDefaultState();
-    private static final IBlockState SAND = Blocks.SAND.getDefaultState();
     private static final IBlockState MUD = BOPBlocks.mud.getDefaultState().withProperty(BlockBOPMud.VARIANT, BlockBOPMud.MudType.MUD); // Why...?
     private static final IBlockState WATER = Blocks.WATER.getDefaultState();
     private static final IBlockState SALT_WATER = FluidsTFC.SALT_WATER.get().getBlock().getDefaultState();
 
+    private static final Block SAND = Blocks.SAND;
     private static final Block SANDSTONE = Blocks.SANDSTONE;
+
+    private static final Predicate<Biome> RED_SAND;
+
+    static {
+        Predicate<Biome> predicate = biome -> BiomeDictionary.hasType(biome, BiomeDictionary.Type.MESA);
+        predicate = predicate.or(biome -> BiomeDictionary.hasType(biome, BiomeDictionary.Type.SAVANNA));
+        predicate = predicate.or(biome -> biome == BOPBiomes.lush_desert.get());
+        RED_SAND = predicate.or(biome -> biome == BOPBiomes.outback.get());
+    }
 
     // Air: -1, Stone: 1, Dirt: 2, Grass Block: 3, Gravel: 4, Sand: 5, Water: 6, Clay Grass: 7, Clay Dirt: 8, Dry Grass: 9, Peat: 10, Sandstone: 11, everything else: 0
     private byte[] trackingArray = new byte[65536];
@@ -83,7 +98,15 @@ public class TrackedChunkPrimer extends ChunkPrimer
                     super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.GRAVEL).getDefaultState());
                     break;
                 case 5:
-                    super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.SAND).getDefaultState());
+                    if (RED_SAND.test(biome))
+                    {
+                        super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.RED_SAND).getDefaultState());
+
+                    }
+                    else
+                    {
+                        super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.SAND).getDefaultState());
+                    }
                     break;
                 case 6:
                     if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
@@ -104,7 +127,15 @@ public class TrackedChunkPrimer extends ChunkPrimer
                     super.setBlockState(x, localY, z, trackingArray[x << 12 | z << 8 | (localY + 1)] == -1 ? BlocksTFC.PEAT_GRASS.getDefaultState() : BlocksTFC.PEAT.getDefaultState());
                     break;
                 case 11:
-                    super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.SANDSTONE).getDefaultState());
+                    if (RED_SAND.test(biome))
+                    {
+                        super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.RED_SANDSTONE).getDefaultState());
+
+                    }
+                    else
+                    {
+                        super.setBlockState(x, localY, z, BlockRockVariant.get(selectedRock, Rock.Type.SANDSTONE).getDefaultState());
+                    }
                 default:
                     break;
             }
@@ -114,6 +145,7 @@ public class TrackedChunkPrimer extends ChunkPrimer
     @Override
     public void setBlockState(int x, int y, int z, IBlockState state)
     {
+        Block block;
         if (trackingArray == null) // TODO: Transform instead of doing this check
         {
             super.setBlockState(x, y, z, state);
@@ -159,7 +191,7 @@ public class TrackedChunkPrimer extends ChunkPrimer
                 peaks[x << 4 | z] = y;
             }
         }
-        else if (state == SAND || state == SILTY_DIRT || state == SANDY_DIRT)
+        else if (state == SILTY_DIRT || state == SANDY_DIRT || (block = state.getBlock()) == SAND)
         {
             trackingArray[x << 12 | z << 8 | y] = 5;
 
@@ -213,7 +245,7 @@ public class TrackedChunkPrimer extends ChunkPrimer
                 peaks[x << 4 | z] = y;
             }
         }
-        else if (state.getBlock() == SANDSTONE)
+        else if (block == SANDSTONE)
         {
             trackingArray[x << 12 | z << 8 | y] = 11;
 

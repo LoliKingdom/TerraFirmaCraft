@@ -109,10 +109,7 @@ public class NewExperimentalGenerator implements IChunkGenerator
         {
             TerrainSettings setting = biome instanceof BOPOverworldBiome ? ((BOPOverworldBiome) biome).terrainSettings : TerrainSettings.forVanillaBiome(biome);
             System.out.println("Height: " + setting.avgHeight + " | Biome: " + biome.getBiomeName());
-            if (!BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
-            {
-                setting.avgHeight += 14;
-            }
+            setting.avgHeight += (95 - 63);
             this.biomeTerrainSettings.put(biome, setting);
         }
     }

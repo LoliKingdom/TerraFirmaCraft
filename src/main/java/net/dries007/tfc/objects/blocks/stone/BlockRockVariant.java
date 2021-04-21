@@ -125,11 +125,13 @@ public class BlockRockVariant extends Block implements IItemSize
                 setHarvestLevel("pickaxe", 0);
                 break;
             case SAND:
+            case RED_SAND:
                 setSoundType(SoundType.SAND);
                 setHardness(rock.getRockCategory().getHardness() * 0.05F);
                 setHarvestLevel("shovel", 0);
                 break;
             case SANDSTONE:
+            case RED_SANDSTONE:
             // case CUT_SANDSTONE:
             // case SMOOTH_SANDSTONE:
                 setSoundType(SoundType.STONE);
