@@ -23,8 +23,8 @@ import net.dries007.tfc.util.climate.ClimateTFC;
 
 public class GrassColorHandler
 {
-    public static NoiseGeneratorPerlin noiseGenerator = new NoiseGeneratorPerlin(new Random("NOISE_GRASS".hashCode()), 2);
-    public static Color[] monthlyColors = new Color[12];
+    public static final NoiseGeneratorPerlin noiseGenerator = new NoiseGeneratorPerlin(new Random("NOISE_GRASS".hashCode()), 2);
+    public static final Color[] monthlyColors = new Color[12];
 
     static
     {

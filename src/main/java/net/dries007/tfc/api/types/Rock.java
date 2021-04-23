@@ -148,6 +148,7 @@ public class Rock extends IForgeRegistryEntry.Impl<Rock> implements Comparable<R
         // SMOOTH_SANDSTONE(Material.ROCK, false, null), TODO
         GRAVEL(Material.SAND, false, Specification.VERTICAL_AND_HORIZONTAL),
         DIRT(Material.GROUND, false, Specification.VERTICAL_AND_HORIZONTAL),
+        MYCELIUM(Material.GRASS, false, Specification.VERTICAL_AND_HORIZONTAL),
         GRASS(Material.GRASS, true, Specification.VERTICAL_AND_HORIZONTAL),
         DRY_GRASS(Material.GRASS, true, Specification.VERTICAL_AND_HORIZONTAL),
         CLAY(Material.CLAY, false, Specification.VERTICAL_ONLY),

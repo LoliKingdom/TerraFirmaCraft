@@ -5,17 +5,18 @@
 
 package net.dries007.tfc.client;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fluids.Fluid;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+
 public class FluidSpriteCache
 {
-    private static final Map<Fluid, TextureAtlasSprite> CACHESTILL = new HashMap<>();
-    private static final Map<Fluid, TextureAtlasSprite> CACHEFLOWING = new HashMap<>();
+    private static final Map<Fluid, TextureAtlasSprite> CACHESTILL = new Reference2ObjectOpenHashMap<>();
+    private static final Map<Fluid, TextureAtlasSprite> CACHEFLOWING = new Reference2ObjectOpenHashMap<>();
 
     public static TextureAtlasSprite getStillSprite(Fluid fluid)
     {

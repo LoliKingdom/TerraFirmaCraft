@@ -6,7 +6,6 @@
 package net.dries007.tfc.objects.blocks.stone;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javax.annotation.Nonnull;
@@ -22,7 +21,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -30,13 +28,12 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import mcp.MethodsReturnNonnullByDefault;
-import net.dries007.tfc.ConfigTFC;
 import net.dries007.tfc.api.capability.size.IItemSize;
 import net.dries007.tfc.api.capability.size.Size;
 import net.dries007.tfc.api.capability.size.Weight;
 import net.dries007.tfc.api.types.Rock;
-import net.dries007.tfc.client.TFCSounds;
 import net.dries007.tfc.objects.blocks.BlocksTFC;
 import net.dries007.tfc.objects.blocks.agriculture.BlockCropTFC;
 import net.dries007.tfc.objects.blocks.plants.BlockPlantTFC;
@@ -49,7 +46,7 @@ import static net.dries007.tfc.objects.blocks.agriculture.BlockCropTFC.WILD;
 @ParametersAreNonnullByDefault
 public class BlockRockVariant extends Block implements IItemSize
 {
-    private static final Map<Rock, EnumMap<Rock.Type, BlockRockVariant>> TABLE = new HashMap<>();
+    private static final Map<Rock, EnumMap<Rock.Type, BlockRockVariant>> TABLE = new Reference2ObjectOpenHashMap<>();
 
     public static BlockRockVariant get(Rock rock, Rock.Type type)
     {
@@ -80,6 +77,7 @@ public class BlockRockVariant extends Block implements IItemSize
             case GRASS:
             case DRY_GRASS:
             case CLAY_GRASS:
+            case MYCELIUM:
                 return new BlockRockVariantConnected(type, rock);
             case SAND:
             case DIRT:
@@ -154,6 +152,7 @@ public class BlockRockVariant extends Block implements IItemSize
             case CLAY_GRASS:
             case GRASS:
             case DRY_GRASS:
+            case MYCELIUM:
                 setSoundType(SoundType.PLANT);
                 setHardness(rock.getRockCategory().getHardness() * 0.2F);
                 setHarvestLevel("shovel", 0);
@@ -214,8 +213,14 @@ public class BlockRockVariant extends Block implements IItemSize
     @Override
     public void randomTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
-        if (world.isRemote) return;
-        if (type.isGrass) BlockRockVariantConnected.spreadGrass(world, pos, state, rand);
+        if (world.isRemote)
+        {
+            return;
+        }
+        if (type.isGrass)
+        {
+            BlockRockVariantConnected.spreadGrass(world, pos, state, rand);
+        }
         super.randomTick(world, pos, state, rand);
     }
 
@@ -234,6 +239,7 @@ public class BlockRockVariant extends Block implements IItemSize
                 return super.getItemDropped(state, rand, fortune);
             case GRASS:
             case DRY_GRASS:
+            case MYCELIUM:
             case PATH:
                 return Item.getItemFromBlock(get(rock, Rock.Type.DIRT));
         }
@@ -348,6 +354,7 @@ public class BlockRockVariant extends Block implements IItemSize
             case Cave:
                 return true;
             case Water:
+            case Nether:
                 return false;
             case Beach:
             {
@@ -355,15 +362,15 @@ public class BlockRockVariant extends Block implements IItemSize
                 for (EnumFacing facing : EnumFacing.HORIZONTALS)
                 {
                     for (int i = 1; i <= beachDistance; i++)
+                    {
                         if (BlocksTFC.isWater(world.getBlockState(pos.offset(facing, i))))
                         {
                             flag = true;
                         }
+                    }
                 }
                 return (type == Rock.Type.DIRT || type == Rock.Type.GRASS || type == Rock.Type.SAND || type == Rock.Type.DRY_GRASS) && flag;
             }
-            case Nether:
-                return false;
         }
 
         return false;
