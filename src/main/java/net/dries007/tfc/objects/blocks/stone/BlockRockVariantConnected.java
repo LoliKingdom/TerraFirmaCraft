@@ -42,7 +42,7 @@ public class BlockRockVariantConnected extends BlockRockVariantFallable
     public static void spreadGrass(World world, BlockPos pos, IBlockState us, Random rand) {
         BlockPos upPos = pos.up();
         IBlockState up = world.getBlockState(upPos);
-        if (up.getMaterial() == Material.WATER)
+        if (up.getMaterial() == Material.WATER && !world.isAreaLoaded(pos, 2))
         {
             return;
         }
