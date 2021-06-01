@@ -14,6 +14,7 @@ import net.minecraft.block.*;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -158,74 +159,98 @@ public final class ClientRegisterEvents
 
         for (ItemBlock item : BlocksTFC.getAllBarrelItemBlocks())
         {
-            final ModelResourceLocation sealed = new ModelResourceLocation(item.getRegistryName(), "sealed=true");
-            final ModelResourceLocation unsealed = new ModelResourceLocation(item.getRegistryName(), "sealed=false");
-            ModelLoader.setCustomMeshDefinition(item, stack -> stack.getTagCompound() != null ? sealed : unsealed);
+            ModelLoader.setCustomMeshDefinition(item, stack -> stack.getTagCompound() != null ? new ModelResourceLocation(item.getRegistryName(), "sealed=true") : new ModelResourceLocation(item.getRegistryName(), "sealed=false"));
         }
 
         // BLOCKS - STATE MAPPERS //
 
         // Blocks with Ignored Properties
+        final IStateMapper fluidLevelMapper = new StateMap.Builder().ignore(BlockFluidBase.LEVEL).build();
         for (Block block : BlocksTFC.getAllFluidBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockFluidBase.LEVEL).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, fluidLevelMapper);
+        }
+        final IStateMapper fenceGate = new StateMap.Builder().ignore(BlockFenceGate.POWERED).build();
         for (Block block : BlocksTFC.getAllFenceGateBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockFenceGate.POWERED).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, fenceGate);
+        }
+        final IStateMapper leaf = new StateMap.Builder().ignore(BlockLeaves.DECAYABLE).build();
         for (Block block : BlocksTFC.getAllLeafBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockLeaves.DECAYABLE).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, leaf);
+        }
+        final IStateMapper ore = new StateMap.Builder().ignore(BlockOreTFC.GRADE).build();
         for (Block block : BlocksTFC.getAllOreBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockOreTFC.GRADE).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, ore);
+        }
+        final IStateMapper wall = new StateMap.Builder().ignore(BlockWall.VARIANT).build();
         for (Block block : BlocksTFC.getAllWallBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockWall.VARIANT).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, wall);
+        }
+        final IStateMapper log = new StateMap.Builder().ignore(BlockLogTFC.PLACED).build();
         for (Block block : BlocksTFC.getAllLogBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockLogTFC.PLACED).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, log);
+        }
+        final IStateMapper sapling = new StateMap.Builder().ignore(BlockSaplingTFC.STAGE).build();
         for (Block block : BlocksTFC.getAllSaplingBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockSaplingTFC.STAGE).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, sapling);
+        }
+        final IStateMapper door = new StateMap.Builder().ignore(BlockDoor.POWERED).build();
         for (Block block : BlocksTFC.getAllDoorBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockDoor.POWERED).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, door);
+        }
+        final IStateMapper chest = new StateMap.Builder().ignore(BlockChest.FACING).build();
         for (Block block : BlocksTFC.getAllChestBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockChest.FACING).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, chest);
+        }
+        final IStateMapper slab = new StateMap.Builder().ignore(BlockSlabTFC.VARIANT).build();
         for (BlockSlabTFC.Half block : BlocksTFC.getAllSlabBlocks())
         {
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockSlabTFC.VARIANT).build());
-            ModelLoader.setCustomStateMapper(block.doubleSlab, new StateMap.Builder().ignore(BlockSlabTFC.VARIANT).build());
+            ModelLoader.setCustomStateMapper(block, slab);
+            ModelLoader.setCustomStateMapper(block.doubleSlab, slab);
         }
-
+        final IStateMapper crop = new StateMap.Builder().ignore(WILD).build();
         for (Block block : BlocksTFC.getAllCropBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(WILD).build());
-
+        {
+            ModelLoader.setCustomStateMapper(block, crop);
+        }
+        final IStateMapper fruitTreeLeaf = new StateMap.Builder().ignore(BlockFruitTreeLeaves.DECAYABLE).ignore(BlockFruitTreeLeaves.HARVESTABLE).build();
         for (Block block : BlocksTFC.getAllFruitTreeLeavesBlocks())
-            ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(BlockFruitTreeLeaves.DECAYABLE).ignore(BlockFruitTreeLeaves.HARVESTABLE).build());
-
-        BlocksTFC.getAllBlockRockVariants().forEach(e -> {
-            if (e.getType() == Rock.Type.FARMLAND)
+        {
+            ModelLoader.setCustomStateMapper(block, fruitTreeLeaf);
+        }
+        final IStateMapper farmland = new StateMap.Builder().ignore(BlockFarmlandTFC.MOISTURE).build();
+        final IStateMapper rawStone = new StateMap.Builder().ignore(BlockRockRaw.CAN_FALL).build();
+        final IStateMapper smoothStone = new StateMap.Builder().ignore(BlockRockSmooth.CAN_FALL).build();
+        for (BlockRockVariant block : BlocksTFC.getAllBlockRockVariants())
+        {
+            if (block.getType() == Rock.Type.FARMLAND)
             {
-                ModelLoader.setCustomStateMapper(e, new StateMap.Builder().ignore(BlockFarmlandTFC.MOISTURE).build());
+                ModelLoader.setCustomStateMapper(block, farmland);
             }
-            else if (e.getType() == Rock.Type.RAW)
+            else if (block.getType() == Rock.Type.RAW)
             {
-                ModelLoader.setCustomStateMapper(e, new StateMap.Builder().ignore(BlockRockRaw.CAN_FALL).build());
+                ModelLoader.setCustomStateMapper(block, rawStone);
             }
-            else if (e.getType() == Rock.Type.SMOOTH)
+            else if (block.getType() == Rock.Type.SMOOTH)
             {
-                ModelLoader.setCustomStateMapper(e, new StateMap.Builder().ignore(BlockRockSmooth.CAN_FALL).build());
+                ModelLoader.setCustomStateMapper(block, smoothStone);
             }
-        });
+        }
 
         ModelLoader.setCustomStateMapper(BlocksTFC.THATCH_BED, new StateMap.Builder().ignore(BlockThatchBed.OCCUPIED).build());
 
         // Empty Models
         final ModelResourceLocation empty = new ModelResourceLocation(MOD_ID + ":empty");
         // todo: switch to hide rack (involves changing mechanics, etc)
-        final ModelResourceLocation hideRack = new ModelResourceLocation(MOD_ID + ":hide_rack");
+        // final ModelResourceLocation hideRack = new ModelResourceLocation(MOD_ID + ":hide_rack");
 
         ModelLoader.setCustomStateMapper(BlocksTFC.PIT_KILN, blockIn -> ImmutableMap.of(BlocksTFC.PIT_KILN.getDefaultState(), empty));
         ModelLoader.setCustomStateMapper(BlocksTFC.PLACED_ITEM_FLAT, blockIn -> ImmutableMap.of(BlocksTFC.PLACED_ITEM_FLAT.getDefaultState(), empty));
