@@ -83,21 +83,6 @@ public class NutritionStats implements INBTSerializable<NBTTagCompound>
         calculateNutrition();
     }
 
-    /**
-     * This adds a small amount of nutrition directly to the last food data consumed.
-     * It marks said food data as "buffed", and each food data can only be buffed once.
-     * This is used for non-food related nutrition bonuses, for instance drinking milk (which is not a food as it dosen't expire, which is unbalanced)
-     */
-    public void addBuff(@Nonnull FoodData data)
-    {
-        FoodData recentFood = getMostRecentRecord();
-        if (recentFood != null)
-        {
-            recentFood.applyBuff(data);
-            calculateNutrition();
-        }
-    }
-
     @Override
     public NBTTagCompound serializeNBT()
     {

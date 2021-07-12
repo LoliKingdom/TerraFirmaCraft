@@ -115,16 +115,4 @@ public class FoodData implements INBTSerializable<NBTTagCompound>
     {
         return new FoodData(hunger, water, saturation, nutrients, decayModifier);
     }
-
-    public void applyBuff(FoodData buff)
-    {
-        if (!buffed)
-        {
-            buffed = true;
-            for (Nutrient nutrient : Nutrient.values())
-            {
-                nutrients[nutrient.ordinal()] += buff.nutrients[nutrient.ordinal()];
-            }
-        }
-    }
 }

@@ -184,7 +184,7 @@ public final class FluidsTFC
                     {
                         IFoodStatsTFC foodStats = (IFoodStatsTFC) player.getFoodStats();
                         foodStats.addThirst(10);
-                        foodStats.getNutrition().addBuff(FoodData.MILK);
+                        foodStats.getNutrition().addNutrients(FoodData.MILK);
                     }
                 }),
                 OLIVE_OIL = registerFluid(new Fluid("olive_oil", STILL, FLOW, 0xFF6A7537).setRarity(EnumRarity.RARE)),
